@@ -1,0 +1,8 @@
+{
+    "parent": "minecraft:block/cube_bottom_top",
+    "textures": {
+        "bottom": "minecraft:block/smooth_stone",
+        "top": "bridge_maker:block/bridge_maker/bridge_maker_top",
+        "side": "bridge_maker:block/bridge_maker/bridge_maker_side_off"
+    }
+}

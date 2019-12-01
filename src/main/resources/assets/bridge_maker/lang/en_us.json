@@ -1,0 +1,9 @@
+{
+	"bridge_maker_module": "Bridge Maker",
+		"bridge_maker_blocks": "Blocks",
+			"bridge_maker_blocks_bridge_maker": "Blocks: Bridge Maker",
+				"block.bridge_maker.bridge_maker": "Bridge Maker",
+				"container.bridge_maker.bridge_maker": "Bridge Maker",
+		"bridge_maker_item_groups": "Item Groups",
+			"itemGroup.bridge_maker": "Bridge Maker"
+}
