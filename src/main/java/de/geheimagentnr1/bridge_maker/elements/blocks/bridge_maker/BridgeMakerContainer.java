@@ -58,7 +58,7 @@ public class BridgeMakerContainer extends Container {
 	
 	@Nonnull
 	@Override
-	public ItemStack transferStackInSlot( PlayerEntity playerIn, int index ) {
+	public ItemStack transferStackInSlot( @Nonnull PlayerEntity playerIn, int index ) {
 		
 		ItemStack stack = ItemStack.EMPTY;
 		Slot slot = inventorySlots.get( index );
@@ -86,7 +86,7 @@ public class BridgeMakerContainer extends Container {
 	}
 	
 	@Override
-	public void onContainerClosed( PlayerEntity playerIn ) {
+	public void onContainerClosed( @Nonnull PlayerEntity playerIn ) {
 		
 		super.onContainerClosed( playerIn );
 		inventory.closeInventory( playerIn );

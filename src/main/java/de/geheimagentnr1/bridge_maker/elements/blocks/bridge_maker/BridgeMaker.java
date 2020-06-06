@@ -23,6 +23,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,8 +56,8 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 	
 	@SuppressWarnings( "deprecation" )
 	@Override
-	public boolean onBlockActivated( BlockState state, World worldIn, BlockPos pos,
-		PlayerEntity player, Hand handIn, BlockRayTraceResult hit ) {
+	public boolean onBlockActivated( @Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos,
+		@Nonnull PlayerEntity player, @Nonnull Hand handIn, @Nonnull BlockRayTraceResult hit ) {
 		
 		if( !worldIn.isRemote ) {
 			TileEntity tileentity = worldIn.getTileEntity( pos );
@@ -81,8 +82,8 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 	
 	@SuppressWarnings( "deprecation" )
 	@Override
-	public void neighborChanged( BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
-		boolean isMoving ) {
+	public void neighborChanged( @Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos,
+		@Nonnull Block blockIn, @Nonnull BlockPos fromPos, boolean isMoving ) {
 		
 		if( !worldIn.isRemote ) {
 			boolean isPowered = worldIn.getRedstonePowerFromNeighbors( pos ) > 0;
@@ -140,8 +141,8 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 			collectPos = collectPos.offset( facingDirection );
 			if( setBlocks[i] && bridgeMakerInventory.getStackInSlot( i ).isEmpty() ) {
 				ItemStack blockItemStack = null;
-				List<ItemStack> drops =
-					getDrops( blockStates[i], (ServerWorld)worldIn, collectPos, worldIn.getTileEntity( collectPos ) );
+				List<ItemStack> drops = func_220070_a( blockStates[i], (ServerWorld)worldIn, collectPos,
+					worldIn.getTileEntity( collectPos ) );
 				for( ItemStack drop : drops ) {
 					if( drop.getItem() instanceof BlockItem && ( (BlockItem)drop.getItem() ).getBlock() ==
 						blockStates[i].getBlock() ) {

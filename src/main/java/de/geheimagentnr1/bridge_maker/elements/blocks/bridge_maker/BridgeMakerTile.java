@@ -60,7 +60,7 @@ public class BridgeMakerTile extends TileEntity implements INamedContainerProvid
 	}
 	
 	@Override
-	public void read( CompoundNBT compound ) {
+	public void read( @Nonnull CompoundNBT compound ) {
 		
 		super.read( compound );
 		ItemStackHelper.loadAllItems( compound, inventory.getItems() );
@@ -82,7 +82,7 @@ public class BridgeMakerTile extends TileEntity implements INamedContainerProvid
 	
 	@Nonnull
 	@Override
-	public CompoundNBT write( CompoundNBT compound ) {
+	public CompoundNBT write( @Nonnull CompoundNBT compound ) {
 		
 		super.write( compound );
 		ItemStackHelper.saveAllItems( compound, inventory.getItems(), false );
