@@ -15,7 +15,7 @@ public class BridgeMakerMod {
 	
 	public static final String MODID = "bridge_maker";
 	
-	public static final IProxy proxy = DistExecutor.runForDist( () -> ClientProxy::new, () -> ServerProxy::new );
+	public static final IProxy proxy = DistExecutor.safeRunForDist( () -> ClientProxy::new, () -> ServerProxy::new );
 	
 	public static final ModSetup setup = new ModSetup();
 }

@@ -1,6 +1,6 @@
 package de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import de.geheimagentnr1.bridge_maker.BridgeMakerMod;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
@@ -41,7 +41,7 @@ public class BridgeMakerScreen extends ContainerScreen<BridgeMakerContainer> {
 	@Override
 	protected void drawGuiContainerBackgroundLayer( float partialTicks, int mouseX, int mouseY ) {
 		
-		GlStateManager.color4f( 1.0F, 1.0F, 1.0F, 1.0F );
+		RenderSystem.color4f( 1.0F, 1.0F, 1.0F, 1.0F );
 		Objects.requireNonNull( minecraft ).getTextureManager().bindTexture( GUI );
 		int relX = ( width - xSize ) / 2;
 		int relY = ( height - ySize ) / 2;

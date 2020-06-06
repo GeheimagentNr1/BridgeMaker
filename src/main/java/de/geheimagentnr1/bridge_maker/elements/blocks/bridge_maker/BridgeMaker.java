@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -55,8 +56,9 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 	}
 	
 	@SuppressWarnings( "deprecation" )
+	@Nonnull
 	@Override
-	public boolean onBlockActivated( @Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos,
+	public ActionResultType onBlockActivated( @Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos,
 		@Nonnull PlayerEntity player, @Nonnull Hand handIn, @Nonnull BlockRayTraceResult hit ) {
 		
 		if( !worldIn.isRemote ) {
@@ -64,12 +66,12 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 			if( tileentity instanceof BridgeMakerTile ) {
 				BridgeMakerTile bridgeMakerTile = (BridgeMakerTile)tileentity;
 				player.openContainer( bridgeMakerTile );
-				return true;
+				return ActionResultType.SUCCESS;
 			} else {
-				return false;
+				return ActionResultType.PASS;
 			}
 		}
-		return true;
+		return ActionResultType.SUCCESS;
 	}
 	
 	@Nullable
@@ -144,7 +146,7 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 			} else {
 				if( setBlocks[i] && bridgeMakerInventory.getStackInSlot( i ).isEmpty() ) {
 					ItemStack blockItemStack = null;
-					List<ItemStack> drops = func_220070_a( blockStates[i], (ServerWorld)worldIn, collectPos,
+					List<ItemStack> drops = getDrops( blockStates[i], (ServerWorld)worldIn, collectPos,
 						worldIn.getTileEntity( collectPos ) );
 					for( ItemStack drop : drops ) {
 						if( drop.getItem() instanceof BlockItem && ( (BlockItem)drop.getItem() ).getBlock() ==
