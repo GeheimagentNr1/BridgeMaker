@@ -139,25 +139,29 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 		}
 		for( int i = 0; i < inventorySize; i++ ) {
 			collectPos = collectPos.offset( facingDirection );
-			if( setBlocks[i] && bridgeMakerInventory.getStackInSlot( i ).isEmpty() ) {
-				ItemStack blockItemStack = null;
-				List<ItemStack> drops = func_220070_a( blockStates[i], (ServerWorld)worldIn, collectPos,
-					worldIn.getTileEntity( collectPos ) );
-				for( ItemStack drop : drops ) {
-					if( drop.getItem() instanceof BlockItem && ( (BlockItem)drop.getItem() ).getBlock() ==
-						blockStates[i].getBlock() ) {
-						blockItemStack = drop;
-						break;
+			if( worldIn.getBlockState( collectPos ) == Blocks.AIR.getDefaultState() ) {
+				blockStates[i] = null;
+			} else {
+				if( setBlocks[i] && bridgeMakerInventory.getStackInSlot( i ).isEmpty() ) {
+					ItemStack blockItemStack = null;
+					List<ItemStack> drops = func_220070_a( blockStates[i], (ServerWorld)worldIn, collectPos,
+						worldIn.getTileEntity( collectPos ) );
+					for( ItemStack drop : drops ) {
+						if( drop.getItem() instanceof BlockItem && ( (BlockItem)drop.getItem() ).getBlock() ==
+							blockStates[i].getBlock() ) {
+							blockItemStack = drop;
+							break;
+						}
 					}
+					if( blockItemStack == null ) {
+						blockItemStack = new ItemStack( blockStates[i].getBlock().asItem() );
+					}
+					if( blockItemStack.getItem() instanceof BlockItem ) {
+						bridgeMakerInventory.setInventorySlotContents( i, blockItemStack, blockStates[i] );
+						worldIn.setBlockState( collectPos, Blocks.AIR.getDefaultState(), 3 );
+					}
+					setBlocks[i] = false;
 				}
-				if( blockItemStack == null ) {
-					blockItemStack = new ItemStack( blockStates[i].getBlock().asItem() );
-				}
-				if( blockItemStack.getItem() instanceof BlockItem ) {
-					bridgeMakerInventory.setInventorySlotContents( i, blockItemStack, blockStates[i] );
-					worldIn.setBlockState( collectPos, Blocks.AIR.getDefaultState(), 3 );
-				}
-				setBlocks[i] = false;
 			}
 		}
 		return setBlocks;
