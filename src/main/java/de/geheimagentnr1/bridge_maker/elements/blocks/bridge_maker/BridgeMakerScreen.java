@@ -1,5 +1,6 @@
 package de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.geheimagentnr1.bridge_maker.BridgeMakerMod;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -7,6 +8,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 
@@ -24,27 +26,23 @@ public class BridgeMakerScreen extends ContainerScreen<BridgeMakerContainer> {
 	}
 	
 	@Override
-	public void render( int mouseX, int mouseY, float partialTicks ) {
+	public void func_230430_a_( @Nonnull MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_,
+		float p_230430_4_ ) {
 		
-		renderBackground();
-		super.render( mouseX, mouseY, partialTicks );
-		renderHoveredToolTip( mouseX, mouseY );
+		func_230446_a_( p_230430_1_ );
+		super.func_230430_a_( p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_ );
+		func_230459_a_( p_230430_1_, p_230430_2_, p_230430_3_ );
 	}
 	
+	@SuppressWarnings( "deprecation" )
 	@Override
-	protected void drawGuiContainerForegroundLayer( int mouseX, int mouseY ) {
-		
-		font.drawString( title.getFormattedText(), 8.0F, 6.0F, 4210752 );
-		font.drawString( playerInventory.getDisplayName().getFormattedText(), 8.0F, ySize - 96 + 2, 4210752 );
-	}
-	
-	@Override
-	protected void drawGuiContainerBackgroundLayer( float partialTicks, int mouseX, int mouseY ) {
+	protected void func_230450_a_( @Nonnull MatrixStack p_230450_1_, float p_230450_2_, int p_230450_3_,
+		int p_230450_4_ ) {
 		
 		RenderSystem.color4f( 1.0F, 1.0F, 1.0F, 1.0F );
-		Objects.requireNonNull( minecraft ).getTextureManager().bindTexture( GUI );
-		int relX = ( width - xSize ) / 2;
-		int relY = ( height - ySize ) / 2;
-		blit( relX, relY, 0, 0, xSize, ySize );
+		Objects.requireNonNull( field_230706_i_ ).getTextureManager().bindTexture( GUI );
+		int i = ( field_230708_k_ - xSize ) / 2;
+		int j = ( field_230709_l_ - ySize ) / 2;
+		func_238474_b_( p_230450_1_, i, j, 0, 0, xSize, ySize );
 	}
 }

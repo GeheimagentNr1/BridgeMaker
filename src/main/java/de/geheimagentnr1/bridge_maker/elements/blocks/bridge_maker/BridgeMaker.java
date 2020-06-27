@@ -2,10 +2,7 @@ package de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker;
 
 import de.geheimagentnr1.bridge_maker.elements.blocks.BlockItemInterface;
 import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocks;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
@@ -38,7 +35,8 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 	
 	public BridgeMaker() {
 		
-		super( Block.Properties.create( Material.IRON ).hardnessAndResistance( 5.0F, 6.0F ).sound( SoundType.METAL ) );
+		super( AbstractBlock.Properties.create( Material.IRON ).hardnessAndResistance( 5.0F, 6.0F )
+			.sound( SoundType.METAL ) );
 		setRegistryName( registry_name );
 	}
 	

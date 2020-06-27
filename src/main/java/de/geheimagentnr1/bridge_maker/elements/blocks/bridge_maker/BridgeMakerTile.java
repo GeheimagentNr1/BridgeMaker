@@ -60,9 +60,9 @@ public class BridgeMakerTile extends TileEntity implements INamedContainerProvid
 	}
 	
 	@Override
-	public void read( @Nonnull CompoundNBT compound ) {
+	public void func_230337_a_( @Nonnull BlockState state, @Nonnull CompoundNBT compound ) {
 		
-		super.read( compound );
+		super.func_230337_a_( state, compound );
 		ItemStackHelper.loadAllItems( compound, inventory.getItems() );
 		byte[] setBlocksByte = compound.getByteArray( "setBlocks" );
 		if( setBlocksByte.length == setBlocks.length ) {
