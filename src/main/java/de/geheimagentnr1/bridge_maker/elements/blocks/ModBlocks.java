@@ -24,7 +24,7 @@ public class ModBlocks {
 	// L - Loottable fertig
 	// T - Tags fertig
 	
-	public final static Block[] BLOCKS = new Block[] {//BCPFINRLT
+	public static final Block[] BLOCKS = new Block[] {//BCPFINRLT
 		new BridgeMaker(),//BCPFINRLT
 	};
 	

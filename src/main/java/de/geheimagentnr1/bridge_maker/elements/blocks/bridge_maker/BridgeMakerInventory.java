@@ -32,7 +32,8 @@ public class BridgeMakerInventory implements IInventory {
 		isUsableByPlayerListener = _isUsableByPlayerListener;
 	}
 	
-	public NonNullList<ItemStack> getItems() {
+	//package-private
+	NonNullList<ItemStack> getItems() {
 		
 		return items;
 	}
