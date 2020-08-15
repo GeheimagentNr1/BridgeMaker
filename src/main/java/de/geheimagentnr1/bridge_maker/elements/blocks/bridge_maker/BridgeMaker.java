@@ -31,7 +31,7 @@ import java.util.List;
 public class BridgeMaker extends Block implements BlockItemInterface {
 	
 	
-	public final static String registry_name = "bridge_maker";
+	public static final String registry_name = "bridge_maker";
 	
 	public BridgeMaker() {
 		
