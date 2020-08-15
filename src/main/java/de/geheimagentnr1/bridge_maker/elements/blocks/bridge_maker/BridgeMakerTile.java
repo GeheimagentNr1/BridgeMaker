@@ -27,10 +27,10 @@ public class BridgeMakerTile extends TileEntity implements INamedContainerProvid
 	
 	private final BridgeMakerInventory inventory = new BridgeMakerInventory( this::markDirty,
 		player -> {
-			if( Objects.requireNonNull( world ).getTileEntity( pos ) != this ) {
-				return false;
-			} else {
+			if( Objects.requireNonNull( world ).getTileEntity( pos ) == this ) {
 				return player.getDistanceSq( pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D ) <= 64.0D;
+			} else {
+				return false;
 			}
 		} );
 	
@@ -41,7 +41,8 @@ public class BridgeMakerTile extends TileEntity implements INamedContainerProvid
 		super( ModBlocks.BRIDGE_MAKER_TILE );
 	}
 	
-	public BridgeMakerInventory getInventory() {
+	//package-private
+	BridgeMakerInventory getInventory() {
 		
 		return inventory;
 	}
