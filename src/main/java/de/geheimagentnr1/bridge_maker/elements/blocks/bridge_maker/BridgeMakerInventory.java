@@ -14,7 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class BridgeMakerInventory implements IInventory {
+//package-private
+class BridgeMakerInventory implements IInventory {
 	
 	
 	private final NonNullList<ItemStack> items = NonNullList.withSize( 27, ItemStack.EMPTY );

@@ -173,6 +173,7 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 		builder.add( BlockStateProperties.FACING, BlockStateProperties.POWERED );
 	}
 	
+	@SuppressWarnings( "ParameterHidesMemberVariable" )
 	@Override
 	public Item getBlockItem( Item.Properties properties ) {
 		
