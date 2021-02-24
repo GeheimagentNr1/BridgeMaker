@@ -1,21 +1,22 @@
 package de.geheimagentnr1.bridge_maker;
 
 
-import de.geheimagentnr1.bridge_maker.setup.ClientProxy;
-import de.geheimagentnr1.bridge_maker.setup.IProxy;
-import de.geheimagentnr1.bridge_maker.setup.ModSetup;
-import de.geheimagentnr1.bridge_maker.setup.ServerProxy;
-import net.minecraftforge.fml.DistExecutor;
+import de.geheimagentnr1.bridge_maker.config.ClientConfig;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 
 
+@SuppressWarnings( "UtilityClassWithPublicConstructor" )
 @Mod( BridgeMakerMod.MODID )
 public class BridgeMakerMod {
 	
 	
 	public static final String MODID = "bridge_maker";
 	
-	public static final IProxy proxy = DistExecutor.runForDist( () -> ClientProxy::new, () -> ServerProxy::new );
-	
-	public static final ModSetup setup = new ModSetup();
+	public BridgeMakerMod() {
+		
+		ClientConfig.load();
+		ModLoadingContext.get().registerConfig( ModConfig.Type.CLIENT, ClientConfig.CONFIG );
+	}
 }
