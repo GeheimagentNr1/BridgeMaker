@@ -22,31 +22,30 @@ public class BridgeMakerContainer extends Container {
 	}
 	
 	//package-private
-	@SuppressWarnings( "OverridableMethodCallDuringObjectConstruction" )
 	BridgeMakerContainer( int windowID, PlayerInventory playerInventory, IInventory _inventory ) {
 		
 		super( ModBlocks.BRIDGE_MAKER_CONTAINER, windowID );
 		assertInventorySize( _inventory, 27 );
 		inventory = _inventory;
 		_inventory.openInventory( playerInventory.player );
+		initContainer( playerInventory );
+	}
+	
+	private void initContainer( PlayerInventory playerInventory ) {
 		
 		for( int i = 0; i < 3; ++i ) {
 			for( int j = 0; j < 9; ++j ) {
-				addSlot(
-					new BridgeMakerSlot( inventory, j + i * 9, 8 + j * 18,
-						18 + i * 18 ) );
+				addSlot( new BridgeMakerSlot( inventory, j + i * 9, 8 + j * 18, 18 + i * 18 ) );
 			}
 		}
 		for( int i = 0; i < 3; ++i ) {
 			for( int j = 0; j < 9; ++j ) {
-				addSlot(
-					new Slot( playerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18 ) );
+				addSlot( new Slot( playerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18 ) );
 			}
 		}
 		for( int i = 0; i < 9; ++i ) {
 			addSlot( new Slot( playerInventory, i, 8 + i * 18, 142 ) );
 		}
-		
 	}
 	
 	

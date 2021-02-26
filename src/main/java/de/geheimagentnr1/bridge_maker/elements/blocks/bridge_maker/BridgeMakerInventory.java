@@ -14,7 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class BridgeMakerInventory implements IInventory {
+//package-private
+class BridgeMakerInventory implements IInventory {
 	
 	
 	private final NonNullList<ItemStack> items = NonNullList.withSize( 27, ItemStack.EMPTY );
@@ -75,8 +76,9 @@ public class BridgeMakerInventory implements IInventory {
 	BlockState getBlockStateForSlot( int index ) {
 		
 		return blockStates.get( index ) == null ||
-			blockStates.get( index ).getBlock() != ( (BlockItem)items.get( index ).getItem() ).getBlock() ?
-			( (BlockItem)items.get( index ).getItem() ).getBlock().getDefaultState() : blockStates.get( index );
+			blockStates.get( index ).getBlock() != ( (BlockItem)items.get( index ).getItem() ).getBlock()
+			? ( (BlockItem)items.get( index ).getItem() ).getBlock().getDefaultState()
+			: blockStates.get( index );
 	}
 	
 	@Nonnull

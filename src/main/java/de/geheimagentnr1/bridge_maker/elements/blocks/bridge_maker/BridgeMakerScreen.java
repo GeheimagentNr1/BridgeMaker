@@ -15,13 +15,19 @@ import java.util.Objects;
 public class BridgeMakerScreen extends ContainerScreen<BridgeMakerContainer> {
 	
 	
-	private static final ResourceLocation GUI = new ResourceLocation( BridgeMakerMod.MODID,
-		"textures/gui/bridge_maker/bridge_maker_gui.png" );
+	private static final ResourceLocation GUI = new ResourceLocation(
+		BridgeMakerMod.MODID,
+		"textures/gui/bridge_maker/bridge_maker_gui.png"
+	);
 	
-	public BridgeMakerScreen( BridgeMakerContainer _container, PlayerInventory inventory, ITextComponent titleIn ) {
+	public BridgeMakerScreen( BridgeMakerContainer _container, PlayerInventory inv, ITextComponent titleIn ) {
 		
-		super( _container, inventory, titleIn );
-		//noinspection AssignmentToSuperclassField
+		super( _container, inv, titleIn );
+		initScreen();
+	}
+	
+	private void initScreen() {
+		
 		++ySize;
 	}
 	
