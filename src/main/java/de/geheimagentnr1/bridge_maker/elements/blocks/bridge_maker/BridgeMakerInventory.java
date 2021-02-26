@@ -76,8 +76,9 @@ class BridgeMakerInventory implements IInventory {
 	BlockState getBlockStateForSlot( int index ) {
 		
 		return blockStates.get( index ) == null ||
-			blockStates.get( index ).getBlock() != ( (BlockItem)items.get( index ).getItem() ).getBlock() ?
-			( (BlockItem)items.get( index ).getItem() ).getBlock().getDefaultState() : blockStates.get( index );
+			blockStates.get( index ).getBlock() != ( (BlockItem)items.get( index ).getItem() ).getBlock()
+			? ( (BlockItem)items.get( index ).getItem() ).getBlock().getDefaultState()
+			: blockStates.get( index );
 	}
 	
 	@Nonnull

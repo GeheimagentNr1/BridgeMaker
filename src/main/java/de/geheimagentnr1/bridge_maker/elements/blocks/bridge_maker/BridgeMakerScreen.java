@@ -15,13 +15,19 @@ import java.util.Objects;
 public class BridgeMakerScreen extends ContainerScreen<BridgeMakerContainer> {
 	
 	
-	private static final ResourceLocation GUI = new ResourceLocation( BridgeMakerMod.MODID,
-		"textures/gui/bridge_maker/bridge_maker_gui.png" );
+	private static final ResourceLocation GUI = new ResourceLocation(
+		BridgeMakerMod.MODID,
+		"textures/gui/bridge_maker/bridge_maker_gui.png"
+	);
 	
-	public BridgeMakerScreen( BridgeMakerContainer _container, PlayerInventory inventory, ITextComponent titleIn ) {
+	public BridgeMakerScreen( BridgeMakerContainer _container, PlayerInventory inv, ITextComponent titleIn ) {
 		
-		super( _container, inventory, titleIn );
-		//noinspection AssignmentToSuperclassField
+		super( _container, inv, titleIn );
+		initScreen();
+	}
+	
+	private void initScreen() {
+		
 		++ySize;
 	}
 	
@@ -33,9 +39,12 @@ public class BridgeMakerScreen extends ContainerScreen<BridgeMakerContainer> {
 		renderHoveredTooltip( matrixStack, mouseX, mouseY );
 	}
 	
-	@SuppressWarnings( "deprecation" )  
+	@SuppressWarnings( "deprecation" )
 	@Override
-	protected void drawGuiContainerBackgroundLayer( @Nonnull MatrixStack matrixStack, float partialTicks, int x,
+	protected void drawGuiContainerBackgroundLayer(
+		@Nonnull MatrixStack matrixStack,
+		float partialTicks,
+		int x,
 		int y ) {
 		
 		RenderSystem.color4f( 1.0F, 1.0F, 1.0F, 1.0F );

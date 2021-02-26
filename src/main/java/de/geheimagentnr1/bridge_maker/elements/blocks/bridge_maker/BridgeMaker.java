@@ -56,8 +56,13 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 	@SuppressWarnings( "deprecation" )
 	@Nonnull
 	@Override
-	public ActionResultType onBlockActivated( @Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos,
-		@Nonnull PlayerEntity player, @Nonnull Hand handIn, @Nonnull BlockRayTraceResult hit ) {
+	public ActionResultType onBlockActivated(
+		@Nonnull BlockState state,
+		World worldIn,
+		@Nonnull BlockPos pos,
+		@Nonnull PlayerEntity player,
+		@Nonnull Hand handIn,
+		@Nonnull BlockRayTraceResult hit ) {
 		
 		if( !worldIn.isRemote ) {
 			TileEntity tileentity = worldIn.getTileEntity( pos );
@@ -76,14 +81,21 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 	@Override
 	public BlockState getStateForPlacement( BlockItemUseContext context ) {
 		
-		return getDefaultState().with( BlockStateProperties.POWERED, false ).with( BlockStateProperties.FACING,
-			context.getNearestLookingDirection().getOpposite() );
+		return getDefaultState().with( BlockStateProperties.POWERED, false ).with(
+			BlockStateProperties.FACING,
+			context.getNearestLookingDirection().getOpposite()
+		);
 	}
 	
 	@SuppressWarnings( "deprecation" )
 	@Override
-	public void neighborChanged( @Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos,
-		@Nonnull Block blockIn, @Nonnull BlockPos fromPos, boolean isMoving ) {
+	public void neighborChanged(
+		@Nonnull BlockState state,
+		World worldIn,
+		@Nonnull BlockPos pos,
+		@Nonnull Block blockIn,
+		@Nonnull BlockPos fromPos,
+		boolean isMoving ) {
 		
 		if( !worldIn.isRemote ) {
 			boolean isPowered = worldIn.getRedstonePowerFromNeighbors( pos ) > 0;
@@ -94,14 +106,18 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 				if( tileentity instanceof BridgeMakerTile ) {
 					BridgeMakerTile bridgeMakerTile = (BridgeMakerTile)tileentity;
 					BridgeMakerInventory bridgeMakerInventory = bridgeMakerTile.getInventory();
-					bridgeMakerTile.setSetBocksArray( isPowered ? power( bridgeMakerInventory, state, pos, worldIn ) :
-						unpower( bridgeMakerInventory, bridgeMakerTile.getSetBlocks(), state, pos, worldIn ) );
+					bridgeMakerTile.setSetBocksArray( isPowered
+						? power( bridgeMakerInventory, state, pos, worldIn )
+						: unpower( bridgeMakerInventory, bridgeMakerTile.getSetBlocks(), state, pos, worldIn ) );
 				}
 			}
 		}
 	}
 	
-	private boolean[] power( BridgeMakerInventory bridgeMakerInventory, BlockState state, BlockPos pos,
+	private boolean[] power(
+		BridgeMakerInventory bridgeMakerInventory,
+		BlockState state,
+		BlockPos pos,
 		World worldIn ) {
 		
 		boolean[] setBlocks = new boolean[bridgeMakerInventory.getSizeInventory()];
@@ -122,8 +138,12 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 		return setBlocks;
 	}
 	
-	private boolean[] unpower( BridgeMakerInventory bridgeMakerInventory, boolean[] setBlocks, BlockState state,
-		BlockPos pos, World worldIn ) {
+	private boolean[] unpower(
+		BridgeMakerInventory bridgeMakerInventory,
+		boolean[] setBlocks,
+		BlockState state,
+		BlockPos pos,
+		World worldIn ) {
 		
 		Direction facingDirection = state.get( BlockStateProperties.FACING );
 		int inventorySize = bridgeMakerInventory.getSizeInventory();
@@ -144,11 +164,15 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 			} else {
 				if( setBlocks[i] && bridgeMakerInventory.getStackInSlot( i ).isEmpty() ) {
 					ItemStack blockItemStack = null;
-					List<ItemStack> drops = getDrops( blockStates[i], (ServerWorld)worldIn, collectPos,
-						worldIn.getTileEntity( collectPos ) );
+					List<ItemStack> drops = getDrops(
+						blockStates[i],
+						(ServerWorld)worldIn,
+						collectPos,
+						worldIn.getTileEntity( collectPos )
+					);
 					for( ItemStack drop : drops ) {
-						if( drop.getItem() instanceof BlockItem && ( (BlockItem)drop.getItem() ).getBlock() ==
-							blockStates[i].getBlock() ) {
+						if( drop.getItem() instanceof BlockItem &&
+							( (BlockItem)drop.getItem() ).getBlock() == blockStates[i].getBlock() ) {
 							blockItemStack = drop;
 							break;
 						}
