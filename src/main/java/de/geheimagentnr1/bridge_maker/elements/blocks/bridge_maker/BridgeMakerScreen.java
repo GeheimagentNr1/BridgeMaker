@@ -41,7 +41,11 @@ public class BridgeMakerScreen extends ContainerScreen<BridgeMakerContainer> {
 	
 	@SuppressWarnings( "deprecation" )
 	@Override
-	protected void drawGuiContainerBackgroundLayer( @Nonnull MatrixStack matrixStack, float partialTicks, int x, int y ) {
+	protected void drawGuiContainerBackgroundLayer(
+		@Nonnull MatrixStack matrixStack,
+		float partialTicks,
+		int x,
+		int y ) {
 		
 		RenderSystem.color4f( 1.0F, 1.0F, 1.0F, 1.0F );
 		Objects.requireNonNull( minecraft ).getTextureManager().bindTexture( GUI );
