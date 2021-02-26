@@ -25,14 +25,16 @@ import java.util.Objects;
 public class BridgeMakerTile extends TileEntity implements INamedContainerProvider {
 	
 	
-	private final BridgeMakerInventory inventory = new BridgeMakerInventory( this::markDirty,
+	private final BridgeMakerInventory inventory = new BridgeMakerInventory(
+		this::markDirty,
 		player -> {
 			if( Objects.requireNonNull( world ).getTileEntity( pos ) == this ) {
 				return player.getDistanceSq( pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D ) <= 64.0D;
 			} else {
 				return false;
 			}
-		} );
+		}
+	);
 	
 	private boolean[] setBlocks = new boolean[inventory.getSizeInventory()];
 	
@@ -109,13 +111,17 @@ public class BridgeMakerTile extends TileEntity implements INamedContainerProvid
 	@Override
 	public ITextComponent getDisplayName() {
 		
-		return new TranslationTextComponent( Util.makeTranslationKey( "container",
-			ModBlocks.BRIDGE_MAKER.getRegistryName() ) );
+		return new TranslationTextComponent( Util.makeTranslationKey(
+			"container",
+			ModBlocks.BRIDGE_MAKER.getRegistryName()
+		) );
 	}
 	
 	@Nullable
 	@Override
-	public Container createMenu( int windowID, @Nonnull PlayerInventory playerInventory,
+	public Container createMenu(
+		int windowID,
+		@Nonnull PlayerInventory playerInventory,
 		@Nonnull PlayerEntity playerEntity ) {
 		
 		return new BridgeMakerContainer( windowID, playerInventory, inventory );

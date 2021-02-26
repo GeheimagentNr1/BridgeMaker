@@ -8,10 +8,12 @@ import net.minecraft.item.ItemStack;
 import javax.annotation.Nonnull;
 
 
-public class BridgeMakerItemGroup extends ItemGroup {
+//package-private
+class BridgeMakerItemGroup extends ItemGroup {
 	
 	
-	public BridgeMakerItemGroup() {
+	//package-private
+	BridgeMakerItemGroup() {
 		
 		super( BridgeMakerMod.MODID );
 	}
