@@ -10,7 +10,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 
 
-@SuppressWarnings( { "StaticNonFinalField", "PublicField", "PublicStaticArrayField", "unused" } )
+@SuppressWarnings( { "PublicStaticArrayField", "StaticNonFinalField" } )
 public class ModBlocks {
 	
 	//TODO:

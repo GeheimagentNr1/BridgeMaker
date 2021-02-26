@@ -1,31 +1,49 @@
 package de.geheimagentnr1.bridge_maker.handlers;
 
-import de.geheimagentnr1.bridge_maker.BridgeMakerMod;
+import de.geheimagentnr1.bridge_maker.config.ClientConfig;
 import de.geheimagentnr1.bridge_maker.elements.blocks.BlockItemInterface;
 import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocks;
 import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMaker;
 import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerContainer;
+import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerScreen;
 import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerTile;
+import de.geheimagentnr1.bridge_maker.elements.item_groups.ModItemGroups;
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 
-@SuppressWarnings( "unused" )
 @Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD )
-public class RegistryEventHandler {
+public class ModEventHandler {
 	
 	
 	@SubscribeEvent
-	public static void setup( FMLCommonSetupEvent event ) {
+	public static void handleModConfigLoadingEvent( ModConfig.Loading event ) {
 		
-		BridgeMakerMod.proxy.init();
+		ClientConfig.printConfig();
+	}
+	
+	@SubscribeEvent
+	public static void handleModConfigReloadingEvent( ModConfig.ConfigReloading event ) {
+		
+		ClientConfig.printConfig();
+	}
+	
+	@OnlyIn( Dist.CLIENT )
+	@SubscribeEvent
+	public static void handleClientSetupEvent( FMLClientSetupEvent event ) {
+		
+		ScreenManager.registerFactory( ModBlocks.BRIDGE_MAKER_CONTAINER, BridgeMakerScreen::new );
 	}
 	
 	@SubscribeEvent
@@ -37,7 +55,7 @@ public class RegistryEventHandler {
 	@SubscribeEvent
 	public static void onItemsRegistry( RegistryEvent.Register<Item> itemRegistryEvent ) {
 		
-		Item.Properties properties = new Item.Properties().group( BridgeMakerMod.setup.bridgeMakerItemGroup );
+		Item.Properties properties = new Item.Properties().group( ModItemGroups.getItemGroup() );
 		
 		for( Block block : ModBlocks.BLOCKS ) {
 			if( block instanceof BlockItemInterface ) {
@@ -51,14 +69,17 @@ public class RegistryEventHandler {
 	@SubscribeEvent
 	public static void onTileEntityRegistry( RegistryEvent.Register<TileEntityType<?>> event ) {
 		
-		event.getRegistry().register( TileEntityType.Builder.create( BridgeMakerTile::new,
-			ModBlocks.BRIDGE_MAKER ).build( null ).setRegistryName( BridgeMaker.registry_name ) );
+		event.getRegistry().register( TileEntityType.Builder.create( BridgeMakerTile::new, ModBlocks.BRIDGE_MAKER )
+			.build( null )
+			.setRegistryName( BridgeMaker.registry_name ) );
 	}
 	
 	@SubscribeEvent
 	public static void onContainerRegistry( RegistryEvent.Register<ContainerType<?>> event ) {
 		
-		event.getRegistry().register( IForgeContainerType.create( ( windowId, inv, data ) ->
-			new BridgeMakerContainer( windowId, inv ) ).setRegistryName( BridgeMaker.registry_name ) );
+		event.getRegistry().register( IForgeContainerType.create( ( windowId, inv, data ) -> new BridgeMakerContainer(
+			windowId,
+			inv
+		) ).setRegistryName( BridgeMaker.registry_name ) );
 	}
 }
