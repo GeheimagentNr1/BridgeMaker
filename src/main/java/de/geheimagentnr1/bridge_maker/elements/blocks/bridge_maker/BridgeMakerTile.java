@@ -63,17 +63,17 @@ public class BridgeMakerTile extends TileEntity implements INamedContainerProvid
 	}
 	
 	@Override
-	public void func_230337_a_( @Nonnull BlockState state, @Nonnull CompoundNBT compound ) {
+	public void read( @Nonnull BlockState state, @Nonnull CompoundNBT nbt ) {
 		
-		super.func_230337_a_( state, compound );
-		ItemStackHelper.loadAllItems( compound, inventory.getItems() );
-		byte[] setBlocksByte = compound.getByteArray( "setBlocks" );
+		super.read( state, nbt );
+		ItemStackHelper.loadAllItems( nbt, inventory.getItems() );
+		byte[] setBlocksByte = nbt.getByteArray( "setBlocks" );
 		if( setBlocksByte.length == setBlocks.length ) {
 			for( int i = 0; i < setBlocks.length; i++ ) {
 				setBlocks[i] = setBlocksByte[i] == 1;
 			}
 		}
-		ListNBT blockStateNBT = (ListNBT)compound.get( "blockStates" );
+		ListNBT blockStateNBT = (ListNBT)nbt.get( "blockStates" );
 		if( blockStateNBT != null ) {
 			List<BlockState> blockStates = inventory.getBlockStates();
 			for( INBT inbt : blockStateNBT ) {
