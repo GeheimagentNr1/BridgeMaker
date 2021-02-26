@@ -7,7 +7,6 @@ import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMaker;
 import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerContainer;
 import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerScreen;
 import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerTile;
-import de.geheimagentnr1.bridge_maker.elements.datafixers.ModDatafixers;
 import de.geheimagentnr1.bridge_maker.elements.item_groups.ModItemGroups;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.ScreenManager;
@@ -66,11 +65,12 @@ public class ModEventHandler {
 		}
 	}
 	
+	@SuppressWarnings( "ConstantConditions" )
 	@SubscribeEvent
 	public static void onTileEntityRegistry( RegistryEvent.Register<TileEntityType<?>> event ) {
 		
 		event.getRegistry().register( TileEntityType.Builder.create( BridgeMakerTile::new, ModBlocks.BRIDGE_MAKER )
-			.build( ModDatafixers.getType( BridgeMaker.registry_name ) )
+			.build( null )
 			.setRegistryName( BridgeMaker.registry_name ) );
 	}
 	
