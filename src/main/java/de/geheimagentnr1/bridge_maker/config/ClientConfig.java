@@ -16,7 +16,7 @@ import java.util.Locale;
 public class ClientConfig {
 	
 	
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LogManager.getLogger( ClientConfig.class );
 	
 	private static final String MOD_NAME = ModLoadingContext.get().getActiveContainer().getModInfo().getDisplayName();
 	
@@ -28,9 +28,9 @@ public class ClientConfig {
 	
 	static {
 		
-		USE_VANILLA_TAB = BUILDER.comment(
-			"If true, the bridge maker is added to the redstone creative tab. If false, the bridge maker is added to" +
-				" the bridge maker creative tab." )
+		USE_VANILLA_TAB = BUILDER.comment( "If true, the bridge maker is added to the redstone creative tab. " +
+			"If false, the bridge maker is added to the bridge maker creative tab." )
+			.worldRestart()
 			.define( "use_vanilla_tab", false );
 		CONFIG = BUILDER.build();
 	}
@@ -52,9 +52,9 @@ public class ClientConfig {
 	
 	public static void printConfig() {
 		
-		LOGGER.info( "Loading \"{}\" Config", MOD_NAME );
+		LOGGER.info( "Loading \"{}\" Client Config", MOD_NAME );
 		LOGGER.info( "{} = {}", USE_VANILLA_TAB.getPath(), USE_VANILLA_TAB.get() );
-		LOGGER.info( "\"{}\" Config loaded", MOD_NAME );
+		LOGGER.info( "\"{}\" Client Config loaded", MOD_NAME );
 	}
 	
 	public static boolean getUseVanillaTab() {
