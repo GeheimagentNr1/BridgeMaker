@@ -32,7 +32,10 @@ public class BridgeMakerScreen extends ContainerScreen<BridgeMakerContainer> {
 	}
 	
 	@Override
-	public void func_230430_a_( @Nonnull MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_,
+	public void func_230430_a_(
+		@Nonnull MatrixStack p_230430_1_,
+		int p_230430_2_,
+		int p_230430_3_,
 		float p_230430_4_ ) {
 		
 		func_230446_a_( p_230430_1_ );
@@ -42,7 +45,10 @@ public class BridgeMakerScreen extends ContainerScreen<BridgeMakerContainer> {
 	
 	@SuppressWarnings( "deprecation" )
 	@Override
-	protected void func_230450_a_( @Nonnull MatrixStack p_230450_1_, float p_230450_2_, int p_230450_3_,
+	protected void func_230450_a_(
+		@Nonnull MatrixStack p_230450_1_,
+		float p_230450_2_,
+		int p_230450_3_,
 		int p_230450_4_ ) {
 		
 		RenderSystem.color4f( 1.0F, 1.0F, 1.0F, 1.0F );

@@ -1,6 +1,5 @@
 package de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker;
 
-import net.minecraft.block.DoorBlock;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.BlockItem;
@@ -20,7 +19,6 @@ class BridgeMakerSlot extends Slot {
 	@Override
 	public boolean isItemValid( ItemStack stack ) {
 		
-		return stack.getItem() instanceof BlockItem &&
-			!( ( (BlockItem)stack.getItem() ).getBlock() instanceof DoorBlock );
+		return stack.getItem() instanceof BlockItem;
 	}
 }
