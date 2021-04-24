@@ -35,8 +35,11 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 	
 	public BridgeMaker() {
 		
-		super( AbstractBlock.Properties.create( Material.IRON ).hardnessAndResistance( 5.0F, 6.0F )
-			.sound( SoundType.METAL ) );
+		super(
+			AbstractBlock.Properties.create( Material.IRON )
+				.hardnessAndResistance( 5.0F, 6.0F )
+				.sound( SoundType.METAL )
+		);
 		setRegistryName( registry_name );
 	}
 	

@@ -32,7 +32,10 @@ public class BridgeMakerScreen extends ContainerScreen<BridgeMakerContainer> {
 	}
 	
 	@Override
-	public void render( @Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks ) {
+	public void render(
+		@Nonnull MatrixStack matrixStack,
+		int mouseX,
+		int mouseY, float partialTicks ) {
 		
 		renderBackground( matrixStack );
 		super.render( matrixStack, mouseX, mouseY, partialTicks );
