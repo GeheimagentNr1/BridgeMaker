@@ -1,5 +1,6 @@
 package de.geheimagentnr1.bridge_maker.handlers;
 
+import de.geheimagentnr1.bridge_maker.BridgeMakerMod;
 import de.geheimagentnr1.bridge_maker.config.ClientConfig;
 import de.geheimagentnr1.bridge_maker.elements.blocks.BlockItemInterface;
 import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocks;
@@ -23,7 +24,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 
-@Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD )
+@Mod.EventBusSubscriber( modid = BridgeMakerMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
 public class ModEventHandler {
 	
 	
@@ -47,13 +48,13 @@ public class ModEventHandler {
 	}
 	
 	@SubscribeEvent
-	public static void onBlocksRegistry( RegistryEvent.Register<Block> blockRegistryEvent ) {
+	public static void handleBlockRegistryEvent( RegistryEvent.Register<Block> blockRegistryEvent ) {
 		
 		blockRegistryEvent.getRegistry().registerAll( ModBlocks.BLOCKS );
 	}
 	
 	@SubscribeEvent
-	public static void onItemsRegistry( RegistryEvent.Register<Item> itemRegistryEvent ) {
+	public static void handleItemRegistryEvent( RegistryEvent.Register<Item> itemRegistryEvent ) {
 		
 		Item.Properties properties = new Item.Properties().group( ModItemGroups.getItemGroup() );
 		
@@ -67,7 +68,7 @@ public class ModEventHandler {
 	
 	@SuppressWarnings( "ConstantConditions" )
 	@SubscribeEvent
-	public static void onTileEntityRegistry( RegistryEvent.Register<TileEntityType<?>> event ) {
+	public static void handleTileEntityTypeRegistryEvent( RegistryEvent.Register<TileEntityType<?>> event ) {
 		
 		event.getRegistry().register( TileEntityType.Builder.create( BridgeMakerTile::new, ModBlocks.BRIDGE_MAKER )
 			.build( null )
@@ -75,7 +76,7 @@ public class ModEventHandler {
 	}
 	
 	@SubscribeEvent
-	public static void onContainerRegistry( RegistryEvent.Register<ContainerType<?>> event ) {
+	public static void handleContainerTypeRegistryEvent( RegistryEvent.Register<ContainerType<?>> event ) {
 		
 		event.getRegistry().register( IForgeContainerType.create( ( windowId, inv, data ) -> new BridgeMakerContainer(
 			windowId,
