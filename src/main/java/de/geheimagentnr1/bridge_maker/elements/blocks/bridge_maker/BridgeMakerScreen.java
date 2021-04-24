@@ -28,7 +28,7 @@ public class BridgeMakerScreen extends ContainerScreen<BridgeMakerContainer> {
 	
 	private void initScreen() {
 		
-		++ySize;
+		++imageHeight;
 	}
 	
 	@Override
@@ -36,21 +36,17 @@ public class BridgeMakerScreen extends ContainerScreen<BridgeMakerContainer> {
 		
 		renderBackground( matrixStack );
 		super.render( matrixStack, mouseX, mouseY, partialTicks );
-		renderHoveredTooltip( matrixStack, mouseX, mouseY );
+		renderTooltip( matrixStack, mouseX, mouseY );
 	}
 	
 	@SuppressWarnings( "deprecation" )
 	@Override
-	protected void drawGuiContainerBackgroundLayer(
-		@Nonnull MatrixStack matrixStack,
-		float partialTicks,
-		int x,
-		int y ) {
+	protected void renderBg( @Nonnull MatrixStack matrixStack, float partialTicks, int x, int y ) {
 		
 		RenderSystem.color4f( 1.0F, 1.0F, 1.0F, 1.0F );
-		Objects.requireNonNull( minecraft ).getTextureManager().bindTexture( GUI );
-		int i = ( width - xSize ) / 2;
-		int j = ( height - ySize ) / 2;
-		blit( matrixStack, i, j, 0, 0, xSize, ySize );
+		Objects.requireNonNull( minecraft ).getTextureManager().bind( GUI );
+		int i = ( width - imageWidth ) / 2;
+		int j = ( height - imageHeight ) / 2;
+		blit( matrixStack, i, j, 0, 0, imageWidth, imageHeight );
 	}
 }

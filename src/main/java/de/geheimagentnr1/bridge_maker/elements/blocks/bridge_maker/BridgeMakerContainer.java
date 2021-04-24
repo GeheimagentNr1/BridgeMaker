@@ -25,9 +25,9 @@ public class BridgeMakerContainer extends Container {
 	BridgeMakerContainer( int windowID, PlayerInventory playerInventory, IInventory _inventory ) {
 		
 		super( ModBlocks.BRIDGE_MAKER_CONTAINER, windowID );
-		assertInventorySize( _inventory, 27 );
+		checkContainerSize( _inventory, 27 );
 		inventory = _inventory;
-		_inventory.openInventory( playerInventory.player );
+		_inventory.startOpen( playerInventory.player );
 		initContainer( playerInventory );
 	}
 	
@@ -50,34 +50,34 @@ public class BridgeMakerContainer extends Container {
 	
 	
 	@Override
-	public boolean canInteractWith( @Nonnull PlayerEntity playerIn ) {
+	public boolean stillValid( @Nonnull PlayerEntity playerIn ) {
 		
-		return inventory.isUsableByPlayer( playerIn );
+		return inventory.stillValid( playerIn );
 	}
 	
 	@Nonnull
 	@Override
-	public ItemStack transferStackInSlot( @Nonnull PlayerEntity playerIn, int index ) {
+	public ItemStack quickMoveStack( @Nonnull PlayerEntity playerIn, int index ) {
 		
 		ItemStack stack = ItemStack.EMPTY;
-		Slot slot = inventorySlots.get( index );
-		if( slot != null && slot.getHasStack() ) {
-			ItemStack stackInSlot = slot.getStack();
+		Slot slot = slots.get( index );
+		if( slot != null && slot.hasItem() ) {
+			ItemStack stackInSlot = slot.getItem();
 			stack = stackInSlot.copy();
-			if( index < inventory.getSizeInventory() ) {
-				if( !mergeItemStack( stackInSlot, inventory.getSizeInventory(), inventorySlots.size(), true ) ) {
+			if( index < inventory.getContainerSize() ) {
+				if( !moveItemStackTo( stackInSlot, inventory.getContainerSize(), slots.size(), true ) ) {
 					return ItemStack.EMPTY;
 				}
 			} else {
-				if( !mergeItemStack( stackInSlot, 0, inventory.getSizeInventory(), false ) ) {
+				if( !moveItemStackTo( stackInSlot, 0, inventory.getContainerSize(), false ) ) {
 					return ItemStack.EMPTY;
 				}
 			}
 			
 			if( stackInSlot.isEmpty() ) {
-				slot.putStack( ItemStack.EMPTY );
+				slot.set( ItemStack.EMPTY );
 			} else {
-				slot.onSlotChanged();
+				slot.setChanged();
 			}
 		}
 		
@@ -85,9 +85,9 @@ public class BridgeMakerContainer extends Container {
 	}
 	
 	@Override
-	public void onContainerClosed( @Nonnull PlayerEntity playerIn ) {
+	public void removed( @Nonnull PlayerEntity playerIn ) {
 		
-		super.onContainerClosed( playerIn );
-		inventory.closeInventory( playerIn );
+		super.removed( playerIn );
+		inventory.stopOpen( playerIn );
 	}
 }

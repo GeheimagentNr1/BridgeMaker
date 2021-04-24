@@ -13,7 +13,7 @@ public class ModItemGroups {
 		
 		if( itemGroup == null ) {
 			if( ClientConfig.getUseVanillaTab() ) {
-				itemGroup = ItemGroup.REDSTONE;
+				itemGroup = ItemGroup.TAB_REDSTONE;
 			} else {
 				itemGroup = new BridgeMakerItemGroup();
 			}

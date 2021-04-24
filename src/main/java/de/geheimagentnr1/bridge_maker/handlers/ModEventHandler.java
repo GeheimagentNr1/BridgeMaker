@@ -44,7 +44,7 @@ public class ModEventHandler {
 	@SubscribeEvent
 	public static void handleClientSetupEvent( FMLClientSetupEvent event ) {
 		
-		ScreenManager.registerFactory( ModBlocks.BRIDGE_MAKER_CONTAINER, BridgeMakerScreen::new );
+		ScreenManager.register( ModBlocks.BRIDGE_MAKER_CONTAINER, BridgeMakerScreen::new );
 	}
 	
 	@SubscribeEvent
@@ -56,7 +56,7 @@ public class ModEventHandler {
 	@SubscribeEvent
 	public static void handleItemRegistryEvent( RegistryEvent.Register<Item> itemRegistryEvent ) {
 		
-		Item.Properties properties = new Item.Properties().group( ModItemGroups.getItemGroup() );
+		Item.Properties properties = new Item.Properties().tab( ModItemGroups.getItemGroup() );
 		
 		for( Block block : ModBlocks.BLOCKS ) {
 			if( block instanceof BlockItemInterface ) {
@@ -70,7 +70,7 @@ public class ModEventHandler {
 	@SubscribeEvent
 	public static void handleTileEntityTypeRegistryEvent( RegistryEvent.Register<TileEntityType<?>> event ) {
 		
-		event.getRegistry().register( TileEntityType.Builder.create( BridgeMakerTile::new, ModBlocks.BRIDGE_MAKER )
+		event.getRegistry().register( TileEntityType.Builder.of( BridgeMakerTile::new, ModBlocks.BRIDGE_MAKER )
 			.build( null )
 			.setRegistryName( BridgeMaker.registry_name ) );
 	}

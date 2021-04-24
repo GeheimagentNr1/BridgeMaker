@@ -20,7 +20,7 @@ class BridgeMakerItemGroup extends ItemGroup {
 	
 	@Nonnull
 	@Override
-	public ItemStack createIcon() {
+	public ItemStack makeIcon() {
 		
 		return new ItemStack( ModBlocks.BRIDGE_MAKER );
 	}

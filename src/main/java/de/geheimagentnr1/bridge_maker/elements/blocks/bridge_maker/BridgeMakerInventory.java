@@ -43,7 +43,7 @@ class BridgeMakerInventory implements IInventory {
 	 * Returns the number of slots in the inventory.
 	 */
 	@Override
-	public int getSizeInventory() {
+	public int getContainerSize() {
 		
 		return items.size();
 	}
@@ -67,7 +67,7 @@ class BridgeMakerInventory implements IInventory {
 	
 	@Nonnull
 	@Override
-	public ItemStack getStackInSlot( int index ) {
+	public ItemStack getItem( int index ) {
 		
 		return items.get( index );
 	}
@@ -77,33 +77,33 @@ class BridgeMakerInventory implements IInventory {
 		
 		return blockStates.get( index ) == null ||
 			blockStates.get( index ).getBlock() != ( (BlockItem)items.get( index ).getItem() ).getBlock()
-			? ( (BlockItem)items.get( index ).getItem() ).getBlock().getDefaultState()
+			? ( (BlockItem)items.get( index ).getItem() ).getBlock().defaultBlockState()
 			: blockStates.get( index );
 	}
 	
 	@Nonnull
 	@Override
-	public ItemStack decrStackSize( int index, int count ) {
+	public ItemStack removeItem( int index, int count ) {
 		
-		ItemStack stack = ItemStackHelper.getAndSplit( items, index, count );
+		ItemStack stack = ItemStackHelper.removeItem( items, index, count );
 		
 		if( !stack.isEmpty() ) {
 			blockStates.set( index, null );
-			markDirty();
+			setChanged();
 		}
 		return stack;
 	}
 	
 	@Nonnull
 	@Override
-	public ItemStack removeStackFromSlot( int index ) {
+	public ItemStack removeItemNoUpdate( int index ) {
 		
 		blockStates.set( index, null );
-		return ItemStackHelper.getAndRemove( items, index );
+		return ItemStackHelper.takeItem( items, index );
 	}
 	
 	@Override
-	public int getInventoryStackLimit() {
+	public int getMaxStackSize() {
 		
 		return 1;
 	}
@@ -113,37 +113,37 @@ class BridgeMakerInventory implements IInventory {
 	 * hasn't changed and skip it.
 	 */
 	@Override
-	public void markDirty() {
+	public void setChanged() {
 		
 		markDirtyListener.reactToEvent();
 	}
 	
 	@Override
-	public void setInventorySlotContents( int index, @Nonnull ItemStack stack ) {
+	public void setItem( int index, @Nonnull ItemStack stack ) {
 		
 		items.set( index, stack );
 		blockStates.set( index, null );
-		if( stack.getCount() > getInventoryStackLimit() ) {
-			stack.setCount( getInventoryStackLimit() );
+		if( stack.getCount() > getMaxStackSize() ) {
+			stack.setCount( getMaxStackSize() );
 		}
-		markDirty();
+		setChanged();
 	}
 	
 	//package-private
-	void setInventorySlotContents( int index, ItemStack itemStack, BlockState blockState ) {
+	void setItem( int index, ItemStack itemStack, BlockState blockState ) {
 		
-		setInventorySlotContents( index, itemStack );
+		setItem( index, itemStack );
 		blockStates.set( index, blockState );
 	}
 	
 	@Override
-	public boolean isUsableByPlayer( @Nonnull PlayerEntity player ) {
+	public boolean stillValid( @Nonnull PlayerEntity player ) {
 		
 		return isUsableByPlayerListener.reactToEvent( player );
 	}
 	
 	@Override
-	public void clear() {
+	public void clearContent() {
 		
 		items.clear();
 		blockStates.clear();

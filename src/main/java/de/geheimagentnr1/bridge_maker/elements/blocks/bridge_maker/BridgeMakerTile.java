@@ -26,17 +26,21 @@ public class BridgeMakerTile extends TileEntity implements INamedContainerProvid
 	
 	
 	private final BridgeMakerInventory inventory = new BridgeMakerInventory(
-		this::markDirty,
+		this::setChanged,
 		player -> {
-			if( Objects.requireNonNull( world ).getTileEntity( pos ) == this ) {
-				return player.getDistanceSq( pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D ) <= 64.0D;
+			if( Objects.requireNonNull( level ).getBlockEntity( worldPosition ) == this ) {
+				return player.distanceToSqr(
+					worldPosition.getX() + 0.5D,
+					worldPosition.getY() + 0.5D,
+					worldPosition.getZ() + 0.5D
+				) <= 64.0D;
 			} else {
 				return false;
 			}
 		}
 	);
 	
-	private boolean[] setBlocks = new boolean[inventory.getSizeInventory()];
+	private boolean[] setBlocks = new boolean[inventory.getContainerSize()];
 	
 	public BridgeMakerTile() {
 		
@@ -53,7 +57,7 @@ public class BridgeMakerTile extends TileEntity implements INamedContainerProvid
 	void setSetBocksArray( boolean[] _setBlocks ) {
 		
 		setBlocks = _setBlocks;
-		markDirty();
+		setChanged();
 	}
 	
 	//package-private
@@ -63,9 +67,9 @@ public class BridgeMakerTile extends TileEntity implements INamedContainerProvid
 	}
 	
 	@Override
-	public void read( @Nonnull BlockState state, @Nonnull CompoundNBT nbt ) {
+	public void load( @Nonnull BlockState state, @Nonnull CompoundNBT nbt ) {
 		
-		super.read( state, nbt );
+		super.load( state, nbt );
 		ItemStackHelper.loadAllItems( nbt, inventory.getItems() );
 		byte[] setBlocksByte = nbt.getByteArray( "setBlocks" );
 		if( setBlocksByte.length == setBlocks.length ) {
@@ -85,9 +89,9 @@ public class BridgeMakerTile extends TileEntity implements INamedContainerProvid
 	
 	@Nonnull
 	@Override
-	public CompoundNBT write( @Nonnull CompoundNBT compound ) {
+	public CompoundNBT save( @Nonnull CompoundNBT compound ) {
 		
-		super.write( compound );
+		super.save( compound );
 		ItemStackHelper.saveAllItems( compound, inventory.getItems(), false );
 		byte[] setBlocksByte = new byte[setBlocks.length];
 		for( int i = 0; i < setBlocks.length; i++ ) {
@@ -111,7 +115,7 @@ public class BridgeMakerTile extends TileEntity implements INamedContainerProvid
 	@Override
 	public ITextComponent getDisplayName() {
 		
-		return new TranslationTextComponent( Util.makeTranslationKey(
+		return new TranslationTextComponent( Util.makeDescriptionId(
 			"container",
 			ModBlocks.BRIDGE_MAKER.getRegistryName()
 		) );
