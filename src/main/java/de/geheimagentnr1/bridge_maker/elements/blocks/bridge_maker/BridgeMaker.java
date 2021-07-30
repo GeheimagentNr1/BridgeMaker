@@ -2,24 +2,24 @@ package de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker;
 
 import de.geheimagentnr1.bridge_maker.elements.blocks.BlockItemInterface;
 import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocks;
-import net.minecraft.block.*;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,57 +28,59 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class BridgeMaker extends Block implements BlockItemInterface {
+public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 	
 	
 	public static final String registry_name = "bridge_maker";
 	
 	public BridgeMaker() {
 		
-		super( AbstractBlock.Properties.of( Material.METAL ).strength( 5.0F, 6.0F ).sound( SoundType.METAL ) );
+		super( Properties.of( Material.METAL ).strength( 5.0F, 6.0F ).sound( SoundType.METAL ) );
 		setRegistryName( registry_name );
-	}
-	
-	@Override
-	public boolean hasTileEntity( BlockState state ) {
-		
-		return true;
 	}
 	
 	@Nullable
 	@Override
-	public TileEntity createTileEntity( BlockState state, IBlockReader world ) {
+	public BlockEntity newBlockEntity( @Nonnull BlockPos pos, @Nonnull BlockState state ) {
 		
-		return new BridgeMakerTile();
+		return new BridgeMakerEntity( pos, state );
+	}
+	
+	@Nonnull
+	@Override
+	public RenderShape getRenderShape( @Nonnull BlockState state ) {
+		
+		return RenderShape.MODEL;
 	}
 	
 	@SuppressWarnings( "deprecation" )
 	@Nonnull
 	@Override
-	public ActionResultType use(
+	public InteractionResult use(
 		@Nonnull BlockState state,
-		World worldIn,
+		@Nonnull Level level,
 		@Nonnull BlockPos pos,
-		@Nonnull PlayerEntity player,
-		@Nonnull Hand handIn,
-		@Nonnull BlockRayTraceResult hit ) {
+		@Nonnull Player player,
+		@Nonnull InteractionHand hand,
+		@Nonnull BlockHitResult blockHitResult ) {
 		
-		if( !worldIn.isClientSide ) {
-			TileEntity tileentity = worldIn.getBlockEntity( pos );
-			if( tileentity instanceof BridgeMakerTile ) {
-				BridgeMakerTile bridgeMakerTile = (BridgeMakerTile)tileentity;
-				player.openMenu( bridgeMakerTile );
-				return ActionResultType.SUCCESS;
-			} else {
-				return ActionResultType.PASS;
-			}
+		if( level.isClientSide() ) {
+			return InteractionResult.SUCCESS;
 		}
-		return ActionResultType.SUCCESS;
+		if( player.isSpectator() ) {
+			return InteractionResult.CONSUME;
+		}
+		BlockEntity blockEntity = level.getBlockEntity( pos );
+		if( blockEntity instanceof BridgeMakerEntity bridgeMakerEntity ) {
+			player.openMenu( bridgeMakerEntity );
+			return InteractionResult.CONSUME;
+		}
+		return InteractionResult.PASS;
 	}
 	
 	@Nullable
 	@Override
-	public BlockState getStateForPlacement( BlockItemUseContext context ) {
+	public BlockState getStateForPlacement( @Nonnull BlockPlaceContext context ) {
 		
 		return defaultBlockState().setValue( BlockStateProperties.POWERED, false )
 			.setValue( BlockStateProperties.FACING, context.getNearestLookingDirection().getOpposite() );
@@ -88,47 +90,46 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 	@Override
 	public void neighborChanged(
 		@Nonnull BlockState state,
-		World worldIn,
+		@Nonnull Level level,
 		@Nonnull BlockPos pos,
-		@Nonnull Block blockIn,
-		@Nonnull BlockPos fromPos,
+		@Nonnull Block neighbarBlock,
+		@Nonnull BlockPos neighborPos,
 		boolean isMoving ) {
 		
-		if( !worldIn.isClientSide ) {
-			boolean isPowered = worldIn.getBestNeighborSignal( pos ) > 0;
+		
+		if( !level.isClientSide() ) {
+			boolean isPowered = level.getBestNeighborSignal( pos ) > 0;
 			
 			if( isPowered != state.getValue( BlockStateProperties.POWERED ) ) {
-				worldIn.setBlock( pos, state.setValue( BlockStateProperties.POWERED, isPowered ), 3 );
-				TileEntity tileentity = worldIn.getBlockEntity( pos );
-				if( tileentity instanceof BridgeMakerTile ) {
-					BridgeMakerTile bridgeMakerTile = (BridgeMakerTile)tileentity;
-					BridgeMakerInventory bridgeMakerInventory = bridgeMakerTile.getInventory();
-					bridgeMakerTile.setSetBocksArray( isPowered
-						? power( bridgeMakerInventory, state, pos, worldIn )
-						: unpower( bridgeMakerInventory, bridgeMakerTile.getSetBlocks(), state, pos, worldIn ) );
+				level.setBlock( pos, state.setValue( BlockStateProperties.POWERED, isPowered ), 3 );
+				BlockEntity blockEntity = level.getBlockEntity( pos );
+				if( blockEntity instanceof BridgeMakerEntity bridgeMakerEntity ) {
+					bridgeMakerEntity.setSetBocksArray( isPowered
+						? power( bridgeMakerEntity, state, pos, level )
+						: unpower( bridgeMakerEntity, bridgeMakerEntity.getSetBlocks(), state, pos, level ) );
 				}
 			}
 		}
 	}
 	
 	private boolean[] power(
-		BridgeMakerInventory bridgeMakerInventory,
+		BridgeMakerEntity bridgeMakerEntity,
 		BlockState state,
 		BlockPos pos,
-		World worldIn ) {
+		Level level ) {
 		
-		boolean[] setBlocks = new boolean[bridgeMakerInventory.getContainerSize()];
+		boolean[] setBlocks = new boolean[bridgeMakerEntity.getContainerSize()];
 		ArrayList<Block> replacableBlocks = new ArrayList<>( Arrays.asList( Blocks.AIR, Blocks.LAVA, Blocks.WATER ) );
 		BlockPos nextPos = pos;
 		
-		for( int i = 0; i < bridgeMakerInventory.getContainerSize(); i++ ) {
+		for( int i = 0; i < bridgeMakerEntity.getContainerSize(); i++ ) {
 			setBlocks[i] = false;
 			nextPos = nextPos.relative( state.getValue( BlockStateProperties.FACING ) );
-			if( replacableBlocks.contains( worldIn.getBlockState( nextPos ).getBlock() ) &&
-				!bridgeMakerInventory.getItem( i ).isEmpty() ) {
-				worldIn.setBlock( nextPos, bridgeMakerInventory.getBlockStateForSlot( i ), 3 );
-				BlockItem.updateCustomBlockEntityTag( worldIn, null, nextPos, bridgeMakerInventory.getItem( i ) );
-				bridgeMakerInventory.setItem( i, ItemStack.EMPTY, null );
+			if( replacableBlocks.contains( level.getBlockState( nextPos ).getBlock() ) &&
+				!bridgeMakerEntity.getItem( i ).isEmpty() ) {
+				level.setBlock( nextPos, bridgeMakerEntity.getBlockStateForSlot( i ), 3 );
+				BlockItem.updateCustomBlockEntityTag( level, null, nextPos, bridgeMakerEntity.getItem( i ) );
+				bridgeMakerEntity.setItem( i, ItemStack.EMPTY, null );
 				setBlocks[i] = true;
 			}
 		}
@@ -136,38 +137,38 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 	}
 	
 	private boolean[] unpower(
-		BridgeMakerInventory bridgeMakerInventory,
+		BridgeMakerEntity bridgeMakerEntity,
 		boolean[] setBlocks,
 		BlockState state,
 		BlockPos pos,
-		World worldIn ) {
+		Level level ) {
 		
-		Direction facingDirection = state.getValue( BlockStateProperties.FACING );
-		int inventorySize = bridgeMakerInventory.getContainerSize();
-		BlockState[] blockStates = new BlockState[inventorySize];
+		Direction facing = state.getValue( BlockStateProperties.FACING );
+		int containerSize = bridgeMakerEntity.getContainerSize();
+		BlockState[] blockStates = new BlockState[containerSize];
 		BlockPos nextPos = pos;
 		BlockPos collectPos = pos;
 		
-		for( int i = 0; i < inventorySize; i++ ) {
-			nextPos = nextPos.relative( facingDirection );
-			if( setBlocks[i] && bridgeMakerInventory.getItem( i ).isEmpty() ) {
-				blockStates[i] = worldIn.getBlockState( nextPos );
+		for( int i = 0; i < containerSize; i++ ) {
+			nextPos = nextPos.relative( facing );
+			if( setBlocks[i] && bridgeMakerEntity.getItem( i ).isEmpty() ) {
+				blockStates[i] = level.getBlockState( nextPos );
 			}
 		}
-		for( int i = 0; i < inventorySize; i++ ) {
-			collectPos = collectPos.relative( facingDirection );
-			if( worldIn.getBlockState( collectPos ) == Blocks.AIR.defaultBlockState() ) {
+		for( int i = 0; i < containerSize; i++ ) {
+			collectPos = collectPos.relative( facing );
+			if( level.getBlockState( collectPos ) == Blocks.AIR.defaultBlockState() ) {
 				blockStates[i] = null;
 			} else {
-				if( setBlocks[i] && bridgeMakerInventory.getItem( i ).isEmpty() ) {
+				if( setBlocks[i] && bridgeMakerEntity.getItem( i ).isEmpty() ) {
 					ItemStack blockItemStack = null;
-					List<ItemStack> drops = getDrops(
+					List<ItemStack> blockDrops = getDrops(
 						blockStates[i],
-						(ServerWorld)worldIn,
+						(ServerLevel)level,
 						collectPos,
-						worldIn.getBlockEntity( collectPos )
+						level.getBlockEntity( collectPos )
 					);
-					for( ItemStack drop : drops ) {
+					for( ItemStack drop : blockDrops ) {
 						if( drop.getItem() instanceof BlockItem &&
 							( (BlockItem)drop.getItem() ).getBlock() == blockStates[i].getBlock() ) {
 							blockItemStack = drop;
@@ -178,8 +179,8 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 						blockItemStack = new ItemStack( blockStates[i].getBlock().asItem() );
 					}
 					if( blockItemStack.getItem() instanceof BlockItem ) {
-						bridgeMakerInventory.setItem( i, blockItemStack, blockStates[i] );
-						worldIn.setBlock( collectPos, Blocks.AIR.defaultBlockState(), 3 );
+						bridgeMakerEntity.setItem( i, blockItemStack, blockStates[i] );
+						level.setBlock( collectPos, Blocks.AIR.defaultBlockState(), 3 );
 					}
 					setBlocks[i] = false;
 				}
@@ -189,13 +190,13 @@ public class BridgeMaker extends Block implements BlockItemInterface {
 	}
 	
 	@Override
-	protected void createBlockStateDefinition( StateContainer.Builder<Block, BlockState> builder ) {
+	protected void createBlockStateDefinition( @Nonnull StateDefinition.Builder<Block, BlockState> builder ) {
 		
 		builder.add( BlockStateProperties.FACING, BlockStateProperties.POWERED );
 	}
 	
 	@Override
-	public Item getBlockItem( Item.Properties properties ) {
+	public Item getBlockItem( @SuppressWarnings( "ParameterHidesMemberVariable" ) Item.Properties properties ) {
 		
 		return new BlockItem( ModBlocks.BRIDGE_MAKER, properties ).setRegistryName( registry_name );
 	}

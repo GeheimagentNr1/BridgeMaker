@@ -1,18 +1,18 @@
 package de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import de.geheimagentnr1.bridge_maker.BridgeMakerMod;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
 
 
-public class BridgeMakerScreen extends ContainerScreen<BridgeMakerContainer> {
+public class BridgeMakerScreen extends AbstractContainerScreen<BridgeMakerMenu> {
 	
 	
 	private static final ResourceLocation GUI = new ResourceLocation(
@@ -20,33 +20,33 @@ public class BridgeMakerScreen extends ContainerScreen<BridgeMakerContainer> {
 		"textures/gui/bridge_maker/bridge_maker_gui.png"
 	);
 	
-	public BridgeMakerScreen( BridgeMakerContainer _container, PlayerInventory inv, ITextComponent titleIn ) {
+	public BridgeMakerScreen( BridgeMakerMenu container, Inventory inventory, Component _title ) {
 		
-		super( _container, inv, titleIn );
+		super( container, inventory, _title );
 		initScreen();
 	}
 	
 	private void initScreen() {
 		
-		++imageHeight;
+		imageHeight++;
 	}
 	
 	@Override
-	public void render( @Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks ) {
+	public void render( @Nonnull PoseStack poseStack, int mouseX, int mouseY, float partialTicks ) {
 		
-		renderBackground( matrixStack );
-		super.render( matrixStack, mouseX, mouseY, partialTicks );
-		renderTooltip( matrixStack, mouseX, mouseY );
+		renderBackground( poseStack );
+		super.render( poseStack, mouseX, mouseY, partialTicks );
+		renderTooltip( poseStack, mouseX, mouseY );
 	}
 	
-	@SuppressWarnings( "deprecation" )
 	@Override
-	protected void renderBg( @Nonnull MatrixStack matrixStack, float partialTicks, int x, int y ) {
+	protected void renderBg( @Nonnull PoseStack poseStack, float partialTicks, int x, int y ) {
 		
-		RenderSystem.color4f( 1.0F, 1.0F, 1.0F, 1.0F );
-		Objects.requireNonNull( minecraft ).getTextureManager().bind( GUI );
-		int i = ( width - imageWidth ) / 2;
-		int j = ( height - imageHeight ) / 2;
-		blit( matrixStack, i, j, 0, 0, imageWidth, imageHeight );
+		RenderSystem.setShader( GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderTexture(0, GUI);
+		int left = ( width - imageWidth ) / 2;
+		int top = ( height - imageHeight ) / 2;
+		blit( poseStack, left, top, 0, 0, imageWidth, imageHeight );
 	}
 }

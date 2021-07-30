@@ -1,19 +1,19 @@
 package de.geheimagentnr1.bridge_maker.elements.item_groups;
 
 import de.geheimagentnr1.bridge_maker.config.ClientConfig;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.world.item.CreativeModeTab;
 
 
 public class ModItemGroups {
 	
 	
-	private static ItemGroup itemGroup;
+	private static CreativeModeTab itemGroup;
 	
-	public static ItemGroup getItemGroup() {
+	public static CreativeModeTab getItemGroup() {
 		
 		if( itemGroup == null ) {
 			if( ClientConfig.getUseVanillaTab() ) {
-				itemGroup = ItemGroup.TAB_REDSTONE;
+				itemGroup = CreativeModeTab.TAB_REDSTONE;
 			} else {
 				itemGroup = new BridgeMakerItemGroup();
 			}

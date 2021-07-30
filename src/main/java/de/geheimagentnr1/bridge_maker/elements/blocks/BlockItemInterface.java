@@ -1,6 +1,6 @@
 package de.geheimagentnr1.bridge_maker.elements.blocks;
 
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 
 
 @SuppressWarnings( "InterfaceWithOnlyOneDirectInheritor" )

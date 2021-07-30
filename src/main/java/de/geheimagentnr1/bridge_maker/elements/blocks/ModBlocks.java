@@ -2,11 +2,11 @@ package de.geheimagentnr1.bridge_maker.elements.blocks;
 
 import de.geheimagentnr1.bridge_maker.BridgeMakerMod;
 import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMaker;
-import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerContainer;
-import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerTile;
-import net.minecraft.block.Block;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.tileentity.TileEntityType;
+import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerEntity;
+import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 
 
@@ -32,8 +32,8 @@ public class ModBlocks {
 	public static BridgeMaker BRIDGE_MAKER;
 	
 	@ObjectHolder( BridgeMakerMod.MODID + ":" + BridgeMaker.registry_name )
-	public static TileEntityType<BridgeMakerTile> BRIDGE_MAKER_TILE;
+	public static BlockEntityType<BridgeMakerEntity> BRIDGE_MAKER_ENTITY;
 	
 	@ObjectHolder( BridgeMakerMod.MODID + ":" + BridgeMaker.registry_name )
-	public static ContainerType<BridgeMakerContainer> BRIDGE_MAKER_CONTAINER;
+	public static MenuType<BridgeMakerMenu> BRIDGE_MAKER_CONTAINER;
 }

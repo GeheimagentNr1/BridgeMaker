@@ -1,9 +1,12 @@
 package de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
+
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 
 //package-private
@@ -11,13 +14,13 @@ class BridgeMakerSlot extends Slot {
 	
 	
 	//package-private
-	BridgeMakerSlot( IInventory inventoryIn, int index, int xPosition, int yPosition ) {
+	BridgeMakerSlot( @Nonnull Container _container, int _index, int _x, int _y ) {
 		
-		super( inventoryIn, index, xPosition, yPosition );
+		super( _container, _index, _x, _y );
 	}
 	
 	@Override
-	public boolean mayPlace( ItemStack stack ) {
+	public boolean mayPlace( @Nonnull ItemStack stack ) {
 		
 		return stack.getItem() instanceof BlockItem;
 	}

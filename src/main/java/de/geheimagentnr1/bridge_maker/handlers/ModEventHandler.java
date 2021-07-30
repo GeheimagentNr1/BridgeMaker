@@ -5,22 +5,22 @@ import de.geheimagentnr1.bridge_maker.config.ClientConfig;
 import de.geheimagentnr1.bridge_maker.elements.blocks.BlockItemInterface;
 import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocks;
 import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMaker;
-import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerContainer;
+import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerEntity;
+import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerMenu;
 import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerScreen;
-import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerTile;
 import de.geheimagentnr1.bridge_maker.elements.item_groups.ModItemGroups;
-import net.minecraft.block.Block;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 
@@ -29,13 +29,13 @@ public class ModEventHandler {
 	
 	
 	@SubscribeEvent
-	public static void handleModConfigLoadingEvent( ModConfig.Loading event ) {
+	public static void handleModConfigLoadingEvent( ModConfigEvent.Loading event ) {
 		
 		ClientConfig.printConfig();
 	}
 	
 	@SubscribeEvent
-	public static void handleModConfigReloadingEvent( ModConfig.Reloading event ) {
+	public static void handleModConfigReloadingEvent( ModConfigEvent.Reloading event ) {
 		
 		ClientConfig.printConfig();
 	}
@@ -44,7 +44,7 @@ public class ModEventHandler {
 	@SubscribeEvent
 	public static void handleClientSetupEvent( FMLClientSetupEvent event ) {
 		
-		ScreenManager.register( ModBlocks.BRIDGE_MAKER_CONTAINER, BridgeMakerScreen::new );
+		MenuScreens.register( ModBlocks.BRIDGE_MAKER_CONTAINER, BridgeMakerScreen::new );
 	}
 	
 	@SubscribeEvent
@@ -59,8 +59,7 @@ public class ModEventHandler {
 		Item.Properties properties = new Item.Properties().tab( ModItemGroups.getItemGroup() );
 		
 		for( Block block : ModBlocks.BLOCKS ) {
-			if( block instanceof BlockItemInterface ) {
-				BlockItemInterface blockItem = (BlockItemInterface)block;
+			if( block instanceof BlockItemInterface blockItem ) {
 				itemRegistryEvent.getRegistry().register( blockItem.getBlockItem( properties ) );
 			}
 		}
@@ -68,19 +67,19 @@ public class ModEventHandler {
 	
 	@SuppressWarnings( "ConstantConditions" )
 	@SubscribeEvent
-	public static void handleTileEntityTypeRegistryEvent( RegistryEvent.Register<TileEntityType<?>> event ) {
+	public static void handleBlockEntityTypeRegistryEvent( RegistryEvent.Register<BlockEntityType<?>> event ) {
 		
-		event.getRegistry().register( TileEntityType.Builder.of( BridgeMakerTile::new, ModBlocks.BRIDGE_MAKER )
+		event.getRegistry().register( BlockEntityType.Builder.of( BridgeMakerEntity::new, ModBlocks.BRIDGE_MAKER )
 			.build( null )
 			.setRegistryName( BridgeMaker.registry_name ) );
 	}
 	
 	@SubscribeEvent
-	public static void handleContainerTypeRegistryEvent( RegistryEvent.Register<ContainerType<?>> event ) {
+	public static void handleContainerTypeRegistryEvent( RegistryEvent.Register<MenuType<?>> event ) {
 		
-		event.getRegistry().register( IForgeContainerType.create( ( windowId, inv, data ) -> new BridgeMakerContainer(
-			windowId,
-			inv
-		) ).setRegistryName( BridgeMaker.registry_name ) );
+		event.getRegistry().register(
+			IForgeContainerType.create( ( containerId, inv, data ) -> new BridgeMakerMenu( containerId, inv ) )
+				.setRegistryName( BridgeMaker.registry_name )
+		);
 	}
 }
