@@ -1,22 +1,22 @@
 {
-    "type": "minecraft:crafting_shaped",
-    "pattern": [
-        "III",
-        "SRS",
-        "SSS"
-    ],
-    "key": {
-        "I": {
-            "item": "minecraft:iron_bars"
-        },
-        "S": {
-            "item": "minecraft:smooth_stone"
-        },
-        "R": {
-            "item": "minecraft:redstone"
-        }
-    },
-    "result": {
-        "item": "bridge_maker:bridge_maker"
-    }
+	"type":    "minecraft:crafting_shaped",
+	"pattern": [
+		"III",
+		"SRS",
+		"SSS"
+	],
+	"key":     {
+		"I": {
+			"item": "minecraft:iron_bars"
+		},
+		"S": {
+			"item": "minecraft:smooth_stone"
+		},
+		"R": {
+			"item": "minecraft:redstone"
+		}
+	},
+	"result":  {
+		"item": "bridge_maker:bridge_maker"
+	}
 }

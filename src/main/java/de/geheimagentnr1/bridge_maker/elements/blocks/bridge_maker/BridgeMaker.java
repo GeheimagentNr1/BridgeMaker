@@ -96,7 +96,6 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 		@Nonnull BlockPos neighborPos,
 		boolean isMoving ) {
 		
-		
 		if( !level.isClientSide() ) {
 			boolean isPowered = level.getBestNeighborSignal( pos ) > 0;
 			
@@ -112,11 +111,7 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 		}
 	}
 	
-	private boolean[] power(
-		BridgeMakerEntity bridgeMakerEntity,
-		BlockState state,
-		BlockPos pos,
-		Level level ) {
+	private boolean[] power( BridgeMakerEntity bridgeMakerEntity, BlockState state, BlockPos pos, Level level ) {
 		
 		boolean[] setBlocks = new boolean[bridgeMakerEntity.getContainerSize()];
 		ArrayList<Block> replacableBlocks = new ArrayList<>( Arrays.asList( Blocks.AIR, Blocks.LAVA, Blocks.WATER ) );

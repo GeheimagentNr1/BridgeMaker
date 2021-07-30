@@ -1,30 +1,30 @@
 {
-	"type": "minecraft:block",
+	"type":  "minecraft:block",
 	"pools": [
 		{
-			"rolls": 1,
-			"entries": [
+			"rolls":      1,
+			"entries":    [
 				{
-					"type": "minecraft:item",
+					"type":      "minecraft:item",
 					"functions": [
 						{
 							"function": "minecraft:copy_name",
-							"source": "block_entity"
+							"source":   "block_entity"
 						},
 						{
 							"function": "minecraft:copy_nbt",
-							"source": "block_entity",
-							"ops": [
+							"source":   "block_entity",
+							"ops":      [
 								{
 									"source": "Items",
 									"target": "BlockEntityTag.Items",
-									"op": "replace"
+									"op":     "replace"
 								}
 							]
 						},
 						{
 							"function": "minecraft:set_contents",
-							"entries": [
+							"entries":  [
 								{
 									"type": "minecraft:dynamic",
 									"name": "minecraft:contents"
@@ -32,7 +32,7 @@
 							]
 						}
 					],
-					"name": "bridge_maker:bridge_maker"
+					"name":      "bridge_maker:bridge_maker"
 				}
 			],
 			"conditions": [

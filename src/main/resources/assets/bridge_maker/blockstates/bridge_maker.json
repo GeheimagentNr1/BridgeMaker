@@ -4,13 +4,13 @@
 		"facing=south,powered=false": { "model": "bridge_maker:block/bridge_maker/bridge_maker_off", "x": 90, "y": 180 },
 		"facing=west,powered=false":  { "model": "bridge_maker:block/bridge_maker/bridge_maker_off", "x": 90, "y": 270 },
 		"facing=east,powered=false":  { "model": "bridge_maker:block/bridge_maker/bridge_maker_off", "x": 90, "y": 90 },
-		"facing=up,powered=false": { "model": "bridge_maker:block/bridge_maker/bridge_maker_off" },
-		"facing=down,powered=false": { "model": "bridge_maker:block/bridge_maker/bridge_maker_off", "x": 180 },
-		"facing=north,powered=true": { "model": "bridge_maker:block/bridge_maker/bridge_maker_on", "x": 90 },
-		"facing=south,powered=true": { "model": "bridge_maker:block/bridge_maker/bridge_maker_on", "x": 90, "y": 180 },
-		"facing=west,powered=true":  { "model": "bridge_maker:block/bridge_maker/bridge_maker_on", "x": 90, "y": 270 },
-		"facing=east,powered=true":  { "model": "bridge_maker:block/bridge_maker/bridge_maker_on", "x": 90, "y": 90 },
-		"facing=up,powered=true": { "model": "bridge_maker:block/bridge_maker/bridge_maker_on" },
-		"facing=down,powered=true": { "model": "bridge_maker:block/bridge_maker/bridge_maker_on", "x": 180 }
+		"facing=up,powered=false":    { "model": "bridge_maker:block/bridge_maker/bridge_maker_off" },
+		"facing=down,powered=false":  { "model": "bridge_maker:block/bridge_maker/bridge_maker_off", "x": 180 },
+		"facing=north,powered=true":  { "model": "bridge_maker:block/bridge_maker/bridge_maker_on", "x": 90 },
+		"facing=south,powered=true":  { "model": "bridge_maker:block/bridge_maker/bridge_maker_on", "x": 90, "y": 180 },
+		"facing=west,powered=true":   { "model": "bridge_maker:block/bridge_maker/bridge_maker_on", "x": 90, "y": 270 },
+		"facing=east,powered=true":   { "model": "bridge_maker:block/bridge_maker/bridge_maker_on", "x": 90, "y": 90 },
+		"facing=up,powered=true":     { "model": "bridge_maker:block/bridge_maker/bridge_maker_on" },
+		"facing=down,powered=true":   { "model": "bridge_maker:block/bridge_maker/bridge_maker_on", "x": 180 }
 	}
 }

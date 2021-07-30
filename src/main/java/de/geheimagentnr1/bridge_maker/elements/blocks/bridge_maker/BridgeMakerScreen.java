@@ -42,9 +42,9 @@ public class BridgeMakerScreen extends AbstractContainerScreen<BridgeMakerMenu> 
 	@Override
 	protected void renderBg( @Nonnull PoseStack poseStack, float partialTicks, int x, int y ) {
 		
-		RenderSystem.setShader( GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShaderTexture(0, GUI);
+		RenderSystem.setShader( GameRenderer::getPositionTexShader );
+		RenderSystem.setShaderColor( 1.0F, 1.0F, 1.0F, 1.0F );
+		RenderSystem.setShaderTexture( 0, GUI );
 		int left = ( width - imageWidth ) / 2;
 		int top = ( height - imageHeight ) / 2;
 		blit( poseStack, left, top, 0, 0, imageWidth, imageHeight );
