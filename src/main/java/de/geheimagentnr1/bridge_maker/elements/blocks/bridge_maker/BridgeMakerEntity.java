@@ -188,11 +188,9 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 		}
 	}
 	
-	@Nonnull
 	@Override
-	public CompoundTag save( @Nonnull CompoundTag nbt ) {
+	public void saveAdditional( @Nonnull CompoundTag nbt ) {
 		
-		super.save( nbt );
 		ContainerHelper.saveAllItems( nbt, itemStacks, false );
 		byte[] setBlocksByte = new byte[setBlocks.length];
 		for( int i = 0; i < setBlocks.length; i++ ) {
@@ -208,6 +206,5 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 			}
 		}
 		nbt.put( "blockStates", blockStatesNbt );
-		return nbt;
 	}
 }
