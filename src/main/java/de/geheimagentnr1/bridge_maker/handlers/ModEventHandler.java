@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.extensions.IForgeContainerType;
+import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -78,7 +78,7 @@ public class ModEventHandler {
 	public static void handleContainerTypeRegistryEvent( RegistryEvent.Register<MenuType<?>> event ) {
 		
 		event.getRegistry().register(
-			IForgeContainerType.create( ( containerId, inv, data ) -> new BridgeMakerMenu( containerId, inv ) )
+			IForgeMenuType.create( ( containerId, inv, data ) -> new BridgeMakerMenu( containerId, inv ) )
 				.setRegistryName( BridgeMaker.registry_name )
 		);
 	}
