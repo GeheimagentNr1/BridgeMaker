@@ -75,7 +75,7 @@ public class ModEventHandler {
 	}
 	
 	@SubscribeEvent
-	public static void handleContainerTypeRegistryEvent( RegistryEvent.Register<MenuType<?>> event ) {
+	public static void handleMenuTypeRegistryEvent( RegistryEvent.Register<MenuType<?>> event ) {
 		
 		event.getRegistry().register(
 			IForgeMenuType.create( ( containerId, inv, data ) -> new BridgeMakerMenu( containerId, inv ) )
