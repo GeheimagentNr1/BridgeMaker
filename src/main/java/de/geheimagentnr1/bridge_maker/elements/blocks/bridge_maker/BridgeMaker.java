@@ -35,7 +35,12 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 	
 	public BridgeMaker() {
 		
-		super( Properties.of( Material.METAL ).strength( 5.0F, 6.0F ).sound( SoundType.METAL ) );
+		super(
+			Properties.of( Material.METAL )
+				.strength( 5.0F, 6.0F )
+				.requiresCorrectToolForDrops()
+				.sound( SoundType.METAL )
+		);
 		setRegistryName( registry_name );
 	}
 	
