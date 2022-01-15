@@ -29,7 +29,7 @@ public class ClientConfig {
 	static {
 		
 		USE_VANILLA_TAB = BUILDER.comment( "If true, the bridge maker is added to the redstone creative tab. " +
-			"If false, the bridge maker is added to the bridge maker creative tab." )
+				"If false, the bridge maker is added to the bridge maker creative tab." )
 			.worldRestart()
 			.define( "use_vanilla_tab", false );
 		CONFIG = BUILDER.build();
@@ -38,9 +38,9 @@ public class ClientConfig {
 	public static void load() {
 		
 		CommentedFileConfig configData = CommentedFileConfig.builder( FMLPaths.CONFIGDIR.get()
-			.resolve(
-				BridgeMakerMod.MODID + "-" + ModConfig.Type.CLIENT.name().toLowerCase( Locale.ENGLISH ) + ".toml"
-			) )
+				.resolve(
+					BridgeMakerMod.MODID + "-" + ModConfig.Type.CLIENT.name().toLowerCase( Locale.ENGLISH ) + ".toml"
+				) )
 			.sync()
 			.autosave()
 			.writingMode( WritingMode.REPLACE )
