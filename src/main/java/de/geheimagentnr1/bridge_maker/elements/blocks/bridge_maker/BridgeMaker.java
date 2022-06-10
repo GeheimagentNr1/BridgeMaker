@@ -41,7 +41,6 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 				.requiresCorrectToolForDrops()
 				.sound( SoundType.METAL )
 		);
-		setRegistryName( registry_name );
 	}
 	
 	@Nullable
@@ -198,6 +197,6 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 	@Override
 	public Item getBlockItem( @SuppressWarnings( "ParameterHidesMemberVariable" ) Item.Properties properties ) {
 		
-		return new BlockItem( ModBlocks.BRIDGE_MAKER, properties ).setRegistryName( registry_name );
+		return new BlockItem( ModBlocks.BRIDGE_MAKER, properties );
 	}
 }

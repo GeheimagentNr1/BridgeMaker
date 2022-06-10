@@ -9,19 +9,20 @@ import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerEn
 import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerMenu;
 import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerScreen;
 import de.geheimagentnr1.bridge_maker.elements.item_groups.ModItemGroups;
+import net.minecraft.Util;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.world.inventory.MenuType;
+import net.minecraft.util.datafix.fixes.References;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 
 
 @Mod.EventBusSubscriber( modid = BridgeMakerMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
@@ -48,38 +49,65 @@ public class ModEventHandler {
 	}
 	
 	@SubscribeEvent
-	public static void handleBlockRegistryEvent( RegistryEvent.Register<Block> blockRegistryEvent ) {
+	public static void handleBlockRegistryEvent( RegisterEvent event ) {
 		
-		blockRegistryEvent.getRegistry().registerAll( ModBlocks.BLOCKS );
+		if( event.getRegistryKey().equals( ForgeRegistries.Keys.BLOCKS ) ) {
+			event.register(
+				ForgeRegistries.Keys.BLOCKS,
+				registerHelper -> ModBlocks.BLOCKS.forEach( registryEntry -> registerHelper.register(
+					registryEntry.getRegistryName(),
+					registryEntry.getValue()
+				) )
+			);
+		}
 	}
 	
 	@SubscribeEvent
-	public static void handleItemRegistryEvent( RegistryEvent.Register<Item> itemRegistryEvent ) {
+	public static void handleItemRegistryEvent( RegisterEvent event ) {
 		
-		Item.Properties properties = new Item.Properties().tab( ModItemGroups.getItemGroup() );
-		
-		for( Block block : ModBlocks.BLOCKS ) {
-			if( block instanceof BlockItemInterface blockItem ) {
-				itemRegistryEvent.getRegistry().register( blockItem.getBlockItem( properties ) );
-			}
+		if( event.getRegistryKey().equals( ForgeRegistries.Keys.ITEMS ) ) {
+			Item.Properties properties = new Item.Properties().tab( ModItemGroups.getItemGroup() );
+			event.register(
+				ForgeRegistries.Keys.ITEMS,
+				registerHelper -> ModBlocks.BLOCKS.forEach( registryEntry -> {
+					if( registryEntry.getValue() instanceof BlockItemInterface blockItem ) {
+						registerHelper.register(
+							registryEntry.getRegistryName(),
+							blockItem.getBlockItem( properties )
+						);
+					}
+				} )
+			);
 		}
 	}
 	
 	@SuppressWarnings( "ConstantConditions" )
 	@SubscribeEvent
-	public static void handleBlockEntityTypeRegistryEvent( RegistryEvent.Register<BlockEntityType<?>> event ) {
+	public static void handleBlockEntityTypeRegistryEvent( RegisterEvent event ) {
 		
-		event.getRegistry().register( BlockEntityType.Builder.of( BridgeMakerEntity::new, ModBlocks.BRIDGE_MAKER )
-			.build( null )
-			.setRegistryName( BridgeMaker.registry_name ) );
+		if( event.getRegistryKey().equals( ForgeRegistries.Keys.BLOCK_ENTITY_TYPES ) ) {
+			event.register(
+				ForgeRegistries.Keys.BLOCK_ENTITY_TYPES,
+				registerHelper -> registerHelper.register(
+					BridgeMaker.registry_name,
+					BlockEntityType.Builder.of( BridgeMakerEntity::new, ModBlocks.BRIDGE_MAKER )
+						.build( Util.fetchChoiceType( References.BLOCK_ENTITY, BridgeMaker.registry_name ) )
+				)
+			);
+		}
 	}
 	
 	@SubscribeEvent
-	public static void handleMenuTypeRegistryEvent( RegistryEvent.Register<MenuType<?>> event ) {
+	public static void handleMenuTypeRegistryEvent( RegisterEvent event ) {
 		
-		event.getRegistry().register(
-			IForgeMenuType.create( ( containerId, inv, data ) -> new BridgeMakerMenu( containerId, inv ) )
-				.setRegistryName( BridgeMaker.registry_name )
-		);
+		if( event.getRegistryKey().equals( ForgeRegistries.Keys.CONTAINER_TYPES ) ) {
+			event.register(
+				ForgeRegistries.Keys.CONTAINER_TYPES,
+				registerHelper -> registerHelper.register(
+					BridgeMaker.registry_name,
+					IForgeMenuType.create( ( containerId, inv, data ) -> new BridgeMakerMenu( containerId, inv ) )
+				)
+			);
+		}
 	}
 }

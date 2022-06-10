@@ -4,12 +4,12 @@ import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocks;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -46,9 +46,9 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 	@Override
 	protected Component getDefaultName() {
 		
-		return new TranslatableComponent( Util.makeDescriptionId(
+		return Component.translatable( Util.makeDescriptionId(
 			"container",
-			ModBlocks.BRIDGE_MAKER.getRegistryName()
+			Registry.BLOCK.getKey( ModBlocks.BRIDGE_MAKER )
 		) );
 	}
 	
