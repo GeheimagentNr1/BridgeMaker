@@ -100,9 +100,9 @@ public class ModEventHandler {
 	@SubscribeEvent
 	public static void handleMenuTypeRegistryEvent( RegisterEvent event ) {
 		
-		if( event.getRegistryKey().equals( ForgeRegistries.Keys.CONTAINER_TYPES ) ) {
+		if( event.getRegistryKey().equals( ForgeRegistries.Keys.MENU_TYPES ) ) {
 			event.register(
-				ForgeRegistries.Keys.CONTAINER_TYPES,
+				ForgeRegistries.Keys.MENU_TYPES,
 				registerHelper -> registerHelper.register(
 					BridgeMaker.registry_name,
 					IForgeMenuType.create( ( containerId, inv, data ) -> new BridgeMakerMenu( containerId, inv ) )

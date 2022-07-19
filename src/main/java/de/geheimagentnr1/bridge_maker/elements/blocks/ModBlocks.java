@@ -16,7 +16,7 @@ import net.minecraftforge.registries.ObjectHolder;
 import java.util.List;
 
 
-@SuppressWarnings( { "PublicStaticArrayField", "StaticNonFinalField" } )
+@SuppressWarnings( "StaticNonFinalField" )
 public class ModBlocks {
 	
 	//TODO:
