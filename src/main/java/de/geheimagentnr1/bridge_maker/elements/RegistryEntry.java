@@ -1,9 +1,7 @@
 package de.geheimagentnr1.bridge_maker.elements;
 
-import java.util.function.Supplier;
-
-
 public class RegistryEntry<T> {
+	
 	
 	private final String registryName;
 	
@@ -15,9 +13,9 @@ public class RegistryEntry<T> {
 		value = _value;
 	}
 	
-	public static <T> RegistryEntry<T> create( String registryName, T value) {
+	public static <T> RegistryEntry<T> create( String registryName, T value ) {
 		
-		return new RegistryEntry<>(registryName, value);
+		return new RegistryEntry<>( registryName, value );
 	}
 	
 	public String getRegistryName() {

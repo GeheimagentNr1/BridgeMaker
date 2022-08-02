@@ -9,8 +9,6 @@ import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerMe
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.List;
@@ -37,9 +35,11 @@ public class ModBlocks {
 	@ObjectHolder( registryName = RegistryKeys.BLOCKS, value = BridgeMakerMod.MODID + ":" + BridgeMaker.registry_name )
 	public static BridgeMaker BRIDGE_MAKER;
 	
-	@ObjectHolder( registryName = RegistryKeys.BLOCK_ENTITY_TYPES, value = BridgeMakerMod.MODID + ":" + BridgeMaker.registry_name )
+	@ObjectHolder( registryName = RegistryKeys.BLOCK_ENTITY_TYPES,
+		value = BridgeMakerMod.MODID + ":" + BridgeMaker.registry_name )
 	public static BlockEntityType<BridgeMakerEntity> BRIDGE_MAKER_ENTITY;
 	
-	@ObjectHolder( registryName = RegistryKeys.MENU_TYPES, value = BridgeMakerMod.MODID + ":" + BridgeMaker.registry_name )
+	@ObjectHolder( registryName = RegistryKeys.MENU_TYPES,
+		value = BridgeMakerMod.MODID + ":" + BridgeMaker.registry_name )
 	public static MenuType<BridgeMakerMenu> BRIDGE_MAKER_CONTAINER;
 }
