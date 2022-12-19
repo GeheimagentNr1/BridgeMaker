@@ -4,7 +4,8 @@ import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocks;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -48,7 +49,7 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 		
 		return Component.translatable( Util.makeDescriptionId(
 			"container",
-			Registry.BLOCK.getKey( ModBlocks.BRIDGE_MAKER )
+			BuiltInRegistries.BLOCK.getKey( ModBlocks.BRIDGE_MAKER )
 		) );
 	}
 	
@@ -182,7 +183,12 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 				if( blockStatesElementNbt.getId() == Tag.TAG_COMPOUND ) {
 					CompoundTag blockStateNbt = ( (CompoundTag)blockStatesElementNbt );
 					int index = blockStateNbt.getByte( "Index" );
-					blockStates.set( index, NbtUtils.readBlockState( blockStateNbt ) );
+					blockStates.set( index,
+						NbtUtils.readBlockState(
+							Objects.requireNonNull( level ).holderLookup( Registries.BLOCK ),
+							blockStateNbt
+						)
+					);
 				}
 			}
 		}
