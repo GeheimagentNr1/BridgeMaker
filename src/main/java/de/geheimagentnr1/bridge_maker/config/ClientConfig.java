@@ -3,39 +3,28 @@ package de.geheimagentnr1.bridge_maker.config;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import de.geheimagentnr1.bridge_maker.BridgeMakerMod;
+import de.geheimagentnr1.minecraft_forge_api.AbstractMod;
+import de.geheimagentnr1.minecraft_forge_api.config.AbstractConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
 
-public class ClientConfig {
+public class ClientConfig extends AbstractConfig {
 	
 	
-	private static final Logger LOGGER = LogManager.getLogger( ClientConfig.class );
-	
-	private static final String MOD_NAME = ModLoadingContext.get().getActiveContainer().getModInfo().getDisplayName();
-	
-	private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-	
-	public static final ForgeConfigSpec CONFIG;
-	
-	private static final ForgeConfigSpec.BooleanValue USE_VANILLA_TAB;
-	
-	static {
+	public ClientConfig( @NotNull ModConfig.Type _type, @NotNull AbstractMod _abstractMod ) {
 		
-		USE_VANILLA_TAB = BUILDER.comment( "If true, the bridge maker is added to the redstone creative tab. " +
-				"If false, the bridge maker is added to the bridge maker creative tab." )
-			.worldRestart()
-			.define( "use_vanilla_tab", false );
-		CONFIG = BUILDER.build();
+		super( _type, _abstractMod );
 	}
 	
-	public static void load() {
+	public void load() {
 		
 		CommentedFileConfig configData = CommentedFileConfig.builder( FMLPaths.CONFIGDIR.get()
 				.resolve(
@@ -46,19 +35,23 @@ public class ClientConfig {
 			.writingMode( WritingMode.REPLACE )
 			.build();
 		configData.load();
-		CONFIG.setConfig( configData );
+		getConfig().setConfig( configData );
 		configData.close();
 	}
 	
-	public static void printConfig() {
+	@Override
+	protected void registerConfigValues() {
 		
-		LOGGER.info( "Loading \"{}\" Client Config", MOD_NAME );
-		LOGGER.info( "{} = {}", USE_VANILLA_TAB.getPath(), USE_VANILLA_TAB.get() );
-		LOGGER.info( "\"{}\" Client Config loaded", MOD_NAME );
+		registerConfigValue(
+			"If true, the bridge maker is added to the redstone creative tab. If false, the bridge maker is added to " +
+				"the bridge maker creative tab.",
+			"use_vanilla_tab",
+			false
+		);
 	}
 	
-	public static boolean getUseVanillaTab() {
+	public boolean getUseVanillaTab() {
 		
-		return USE_VANILLA_TAB.get();
+		return getValue( Boolean.class, "use_vanilla_tab" ).orElseThrow();
 	}
 }

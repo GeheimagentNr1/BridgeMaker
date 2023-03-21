@@ -63,3 +63,9 @@ Adds the Bridge Maker, which can place/break blocks in a distance of 27 blocks.
     versionRange="[1.19.3]"
     ordering="NONE"
     side="BOTH"
+#[[dependencies.dimensionteleport]]
+#    modId="examplemod"
+#    mandatory=true
+#    versionRange="[1.0,)"
+#    ordering="NONE"
+#    side="BOTH"
