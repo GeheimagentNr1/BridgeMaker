@@ -11,15 +11,15 @@ import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerSc
 import de.geheimagentnr1.bridge_maker.elements.creative_mod_tabs.ModCreativeTabs;
 import net.minecraft.Util;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.util.datafix.fixes.References;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
@@ -85,16 +85,31 @@ public class ModEventHandler {
 	}
 	
 	@SubscribeEvent
-	public static void handleCreativeModeTabRegisterEvent( CreativeModeTabEvent.Register event ) {
+	public static void handle( BuildCreativeModeTabContentsEvent event ) {
 		
 		if( ClientConfig.getUseVanillaTab() ) {
 			ModBlocks.BLOCKS.forEach( registryEntry ->
-				CreativeModeTabs.REDSTONE_BLOCKS.getDisplayItems()
-					.add( new ItemStack( registryEntry.getValue().asItem() ) )
+				event.accept( new ItemStack( registryEntry.getValue().asItem() ) )
 			);
-		} else {
-			ModCreativeTabs.CREATIVE_TAB_FACTORIES.forEach( creativeModeTabFactory ->
-				event.registerCreativeModeTab( creativeModeTabFactory.getName(), creativeModeTabFactory ) );
+		}
+	}
+	
+	@SubscribeEvent
+	public static void handleCreativeModeTabRegisterEvent( RegisterEvent event ) {
+		
+		if( !ClientConfig.getUseVanillaTab() ) {
+			ModCreativeTabs.CREATIVE_TAB_FACTORIES.forEach( creativeModeTabFactory -> {
+					event.register(
+						Registries.CREATIVE_MODE_TAB,
+						creativeModeTabRegisterHelper -> {
+							creativeModeTabRegisterHelper.register(
+								creativeModeTabFactory.getName(),
+								creativeModeTabFactory.get()
+							);
+						}
+					);
+				}
+			);
 		}
 	}
 	
