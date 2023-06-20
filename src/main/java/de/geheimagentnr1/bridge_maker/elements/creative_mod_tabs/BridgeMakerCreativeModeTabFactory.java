@@ -1,41 +1,42 @@
 package de.geheimagentnr1.bridge_maker.elements.creative_mod_tabs;
 
 import de.geheimagentnr1.bridge_maker.BridgeMakerMod;
-import de.geheimagentnr1.bridge_maker.elements.blocks.BlockItemInterface;
-import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocks;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocksRegisterFactory;
+import de.geheimagentnr1.minecraft_forge_api.elements.creative_mod_tabs.CreativeModeTabFactory;
+import de.geheimagentnr1.minecraft_forge_api.registry.RegistryEntry;
+import lombok.RequiredArgsConstructor;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 
-public class BridgeMakerCreativeModeTabFactory implements CreativeModeTabFactory {
+@RequiredArgsConstructor
+class BridgeMakerCreativeModeTabFactory implements CreativeModeTabFactory {
 	
 	
-	@Override
-	public String getModId() {
-		
-		return BridgeMakerMod.MODID;
-	}
+	@NotNull
+	private final ModBlocksRegisterFactory modBlocksRegisterFactory;
 	
+	@NotNull
 	@Override
 	public String getRegistryName() {
 		
 		return BridgeMakerMod.MODID;
 	}
 	
+	@NotNull
 	@Override
-	public Item getDisplayItem() {
+	public ItemLike getIconItem() {
 		
-		return ModBlocks.BRIDGE_MAKER.asItem();
+		return ModBlocksRegisterFactory.BRIDGE_MAKER;
 	}
 	
+	@NotNull
 	@Override
-	public List<ItemStack> getDisplayItems() {
+	public List<RegistryEntry<Block>> getDisplayBlocks() {
 		
-		return ModBlocks.BLOCKS.stream()
-			.filter( registryEntry -> registryEntry.getValue() instanceof BlockItemInterface )
-			.map( registryEntry -> new ItemStack( registryEntry.getValue() ) )
-			.toList();
+		return modBlocksRegisterFactory.getBlocks();
 	}
 }

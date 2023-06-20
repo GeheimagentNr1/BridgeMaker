@@ -2,21 +2,32 @@ package de.geheimagentnr1.bridge_maker;
 
 
 import de.geheimagentnr1.bridge_maker.config.ClientConfig;
-import net.minecraftforge.fml.ModLoadingContext;
+import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocksRegisterFactory;
+import de.geheimagentnr1.bridge_maker.elements.creative_mod_tabs.ModCreativeTabsRegisterFactory;
+import de.geheimagentnr1.minecraft_forge_api.AbstractMod;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
+import org.jetbrains.annotations.NotNull;
 
 
-@SuppressWarnings( "UtilityClassWithPublicConstructor" )
 @Mod( BridgeMakerMod.MODID )
-public class BridgeMakerMod {
+public class BridgeMakerMod extends AbstractMod {
 	
 	
+	@NotNull
 	public static final String MODID = "bridge_maker";
 	
-	public BridgeMakerMod() {
+	@NotNull
+	@Override
+	public String getModId() {
 		
-		ClientConfig.load();
-		ModLoadingContext.get().registerConfig( ModConfig.Type.CLIENT, ClientConfig.CONFIG );
+		return MODID;
+	}
+	
+	@Override
+	protected void initMod() {
+		
+		ClientConfig clientConfig = registerConfig( ClientConfig::new );
+		ModBlocksRegisterFactory modBlocksRegisterFactory = registerEventHandler( new ModBlocksRegisterFactory() );
+		registerEventHandler( new ModCreativeTabsRegisterFactory( clientConfig, modBlocksRegisterFactory ) );
 	}
 }

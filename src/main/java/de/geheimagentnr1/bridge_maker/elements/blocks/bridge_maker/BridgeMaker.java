@@ -1,7 +1,6 @@
 package de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker;
 
-import de.geheimagentnr1.bridge_maker.elements.blocks.BlockItemInterface;
-import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocks;
+import de.geheimagentnr1.minecraft_forge_api.elements.blocks.BlockItemInterface;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -9,7 +8,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -20,8 +18,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +29,7 @@ import java.util.List;
 public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 	
 	
+	@NotNull
 	public static final String registry_name = "bridge_maker";
 	
 	public BridgeMaker() {
@@ -46,28 +45,28 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 	
 	@Nullable
 	@Override
-	public BlockEntity newBlockEntity( @Nonnull BlockPos pos, @Nonnull BlockState state ) {
+	public BlockEntity newBlockEntity( @NotNull BlockPos pos, @NotNull BlockState state ) {
 		
 		return new BridgeMakerEntity( pos, state );
 	}
 	
-	@Nonnull
+	@NotNull
 	@Override
-	public RenderShape getRenderShape( @Nonnull BlockState state ) {
+	public RenderShape getRenderShape( @NotNull BlockState state ) {
 		
 		return RenderShape.MODEL;
 	}
 	
 	@SuppressWarnings( "deprecation" )
-	@Nonnull
+	@NotNull
 	@Override
 	public InteractionResult use(
-		@Nonnull BlockState state,
-		@Nonnull Level level,
-		@Nonnull BlockPos pos,
-		@Nonnull Player player,
-		@Nonnull InteractionHand hand,
-		@Nonnull BlockHitResult blockHitResult ) {
+		@NotNull BlockState state,
+		@NotNull Level level,
+		@NotNull BlockPos pos,
+		@NotNull Player player,
+		@NotNull InteractionHand hand,
+		@NotNull BlockHitResult blockHitResult ) {
 		
 		if( level.isClientSide() ) {
 			return InteractionResult.SUCCESS;
@@ -85,7 +84,7 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 	
 	@Nullable
 	@Override
-	public BlockState getStateForPlacement( @Nonnull BlockPlaceContext context ) {
+	public BlockState getStateForPlacement( @NotNull BlockPlaceContext context ) {
 		
 		return defaultBlockState().setValue( BlockStateProperties.POWERED, false )
 			.setValue( BlockStateProperties.FACING, context.getNearestLookingDirection().getOpposite() );
@@ -94,11 +93,11 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 	@SuppressWarnings( "deprecation" )
 	@Override
 	public void neighborChanged(
-		@Nonnull BlockState state,
-		@Nonnull Level level,
-		@Nonnull BlockPos pos,
-		@Nonnull Block neighbarBlock,
-		@Nonnull BlockPos neighborPos,
+		@NotNull BlockState state,
+		@NotNull Level level,
+		@NotNull BlockPos pos,
+		@NotNull Block neighbarBlock,
+		@NotNull BlockPos neighborPos,
 		boolean isMoving ) {
 		
 		if( !level.isClientSide() ) {
@@ -116,7 +115,11 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 		}
 	}
 	
-	private boolean[] power( BridgeMakerEntity bridgeMakerEntity, BlockState state, BlockPos pos, Level level ) {
+	private boolean[] power(
+		@NotNull BridgeMakerEntity bridgeMakerEntity,
+		@NotNull BlockState state,
+		@NotNull BlockPos pos,
+		@NotNull Level level ) {
 		
 		boolean[] setBlocks = new boolean[bridgeMakerEntity.getContainerSize()];
 		ArrayList<Block> replacableBlocks = new ArrayList<>( Arrays.asList( Blocks.AIR, Blocks.LAVA, Blocks.WATER ) );
@@ -137,11 +140,11 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 	}
 	
 	private boolean[] unpower(
-		BridgeMakerEntity bridgeMakerEntity,
+		@NotNull BridgeMakerEntity bridgeMakerEntity,
 		boolean[] setBlocks,
-		BlockState state,
-		BlockPos pos,
-		Level level ) {
+		@NotNull BlockState state,
+		@NotNull BlockPos pos,
+		@NotNull Level level ) {
 		
 		Direction facing = state.getValue( BlockStateProperties.FACING );
 		int containerSize = bridgeMakerEntity.getContainerSize();
@@ -190,14 +193,8 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 	}
 	
 	@Override
-	protected void createBlockStateDefinition( @Nonnull StateDefinition.Builder<Block, BlockState> builder ) {
+	protected void createBlockStateDefinition( @NotNull StateDefinition.Builder<Block, BlockState> builder ) {
 		
 		builder.add( BlockStateProperties.FACING, BlockStateProperties.POWERED );
-	}
-	
-	@Override
-	public Item getBlockItem( @SuppressWarnings( "ParameterHidesMemberVariable" ) Item.Properties properties ) {
-		
-		return new BlockItem( ModBlocks.BRIDGE_MAKER, properties );
 	}
 }

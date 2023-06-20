@@ -1,6 +1,6 @@
 package de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker;
 
-import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocks;
+import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocksRegisterFactory;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -19,8 +19,8 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,30 +32,33 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 	
 	private static final int CONTAINER_SIZE = 27;
 	
+	@NotNull
 	private final NonNullList<ItemStack> itemStacks = NonNullList.withSize( CONTAINER_SIZE, ItemStack.EMPTY );
 	
+	@NotNull
 	private final List<BlockState> blockStates = new ArrayList<>( Arrays.asList( new BlockState[CONTAINER_SIZE] ) );
 	
+	@NotNull
 	private boolean[] setBlocks = new boolean[CONTAINER_SIZE];
 	
-	public BridgeMakerEntity( BlockPos pos, BlockState state ) {
+	public BridgeMakerEntity( @NotNull BlockPos pos, @NotNull BlockState state ) {
 		
-		super( ModBlocks.BRIDGE_MAKER_ENTITY, pos, state );
+		super( ModBlocksRegisterFactory.BRIDGE_MAKER_ENTITY, pos, state );
 	}
 	
-	@Nonnull
+	@NotNull
 	@Override
 	protected Component getDefaultName() {
 		
 		return Component.translatable( Util.makeDescriptionId(
 			"container",
-			BuiltInRegistries.BLOCK.getKey( ModBlocks.BRIDGE_MAKER )
+			BuiltInRegistries.BLOCK.getKey( ModBlocksRegisterFactory.BRIDGE_MAKER )
 		) );
 	}
 	
-	@Nonnull
+	@NotNull
 	@Override
-	protected AbstractContainerMenu createMenu( int containerId, @Nonnull Inventory inventory ) {
+	protected AbstractContainerMenu createMenu( int containerId, @NotNull Inventory inventory ) {
 		
 		return new BridgeMakerMenu( containerId, inventory, this );
 	}
@@ -78,7 +81,7 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 		return itemStacks.stream().allMatch( ItemStack::isEmpty );
 	}
 	
-	@Nonnull
+	@NotNull
 	@Override
 	public ItemStack getItem( int index ) {
 		
@@ -86,6 +89,7 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 	}
 	
 	//package-private
+	@NotNull
 	BlockState getBlockStateForSlot( int index ) {
 		
 		return blockStates.get( index ) == null ||
@@ -100,7 +104,7 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 		return setBlocks;
 	}
 	
-	@Nonnull
+	@NotNull
 	@Override
 	public ItemStack removeItem( int index, int count ) {
 		
@@ -113,7 +117,7 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 		return stack;
 	}
 	
-	@Nonnull
+	@NotNull
 	@Override
 	public ItemStack removeItemNoUpdate( int index ) {
 		
@@ -122,7 +126,7 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 	}
 	
 	@Override
-	public void setItem( int index, @Nonnull ItemStack stack ) {
+	public void setItem( int index, @NotNull ItemStack stack ) {
 		
 		itemStacks.set( index, stack );
 		if( stack.getCount() > getMaxStackSize() ) {
@@ -132,21 +136,21 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 	}
 	
 	//package-private
-	void setItem( int index, ItemStack stack, BlockState state ) {
+	void setItem( int index, @NotNull ItemStack stack, BlockState state ) {
 		
 		blockStates.set( index, state );
 		setItem( index, stack );
 	}
 	
 	//package-private
-	void setSetBocksArray( boolean[] _setBlocks ) {
+	void setSetBocksArray( @NotNull boolean[] _setBlocks ) {
 		
 		setBlocks = _setBlocks;
 		setChanged();
 	}
 	
 	@Override
-	public boolean stillValid( @Nonnull Player player ) {
+	public boolean stillValid( @NotNull Player player ) {
 		
 		if( Objects.requireNonNull( level ).getBlockEntity( worldPosition ) == this ) {
 			return player.distanceToSqr(
@@ -167,7 +171,7 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 	}
 	
 	@Override
-	public void load( @Nonnull CompoundTag nbt ) {
+	public void load( @NotNull CompoundTag nbt ) {
 		
 		super.load( nbt );
 		ContainerHelper.loadAllItems( nbt, itemStacks );
@@ -183,7 +187,8 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 				if( blockStatesElementNbt.getId() == Tag.TAG_COMPOUND ) {
 					CompoundTag blockStateNbt = ( (CompoundTag)blockStatesElementNbt );
 					int index = blockStateNbt.getByte( "Index" );
-					blockStates.set( index,
+					blockStates.set(
+						index,
 						NbtUtils.readBlockState(
 							Objects.requireNonNull( level ).holderLookup( Registries.BLOCK ),
 							blockStateNbt
@@ -195,7 +200,7 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 	}
 	
 	@Override
-	public void saveAdditional( @Nonnull CompoundTag nbt ) {
+	public void saveAdditional( @NotNull CompoundTag nbt ) {
 		
 		ContainerHelper.saveAllItems( nbt, itemStacks, false );
 		byte[] setBlocksByte = new byte[setBlocks.length];

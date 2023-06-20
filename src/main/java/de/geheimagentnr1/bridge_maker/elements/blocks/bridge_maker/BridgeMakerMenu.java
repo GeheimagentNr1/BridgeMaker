@@ -1,6 +1,6 @@
 package de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker;
 
-import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocks;
+import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocksRegisterFactory;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -8,31 +8,31 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 
 public class BridgeMakerMenu extends AbstractContainerMenu {
 	
 	
+	@NotNull
 	private final Container container;
 	
-	public BridgeMakerMenu( int windowID, Inventory inventory ) {
+	public BridgeMakerMenu( int _windowId, @NotNull Inventory inventory ) {
 		
-		this( windowID, inventory, new SimpleContainer( 27 ) );
+		this( _windowId, inventory, new SimpleContainer( 27 ) );
 	}
 	
 	//package-private
-	BridgeMakerMenu( int windowID, Inventory inventory, Container _container ) {
+	BridgeMakerMenu( int _windowId, @NotNull Inventory inventory, @NotNull Container _container ) {
 		
-		super( ModBlocks.BRIDGE_MAKER_CONTAINER, windowID );
+		super( ModBlocksRegisterFactory.BRIDGE_MAKER_CONTAINER, _windowId );
 		checkContainerSize( _container, 27 );
 		container = _container;
 		_container.startOpen( inventory.player );
 		initContainer( inventory );
 	}
 	
-	private void initContainer( Inventory playerInventory ) {
+	private void initContainer( @NotNull Inventory playerInventory ) {
 		
 		for( int row = 0; row < 3; row++ ) {
 			for( int column = 0; column < 9; column++ ) {
@@ -51,14 +51,14 @@ public class BridgeMakerMenu extends AbstractContainerMenu {
 	
 	
 	@Override
-	public boolean stillValid( @Nonnull Player player ) {
+	public boolean stillValid( @NotNull Player player ) {
 		
 		return container.stillValid( player );
 	}
 	
-	@Nonnull
+	@NotNull
 	@Override
-	public ItemStack quickMoveStack( @Nonnull Player player, int index ) {
+	public ItemStack quickMoveStack( @NotNull Player player, int index ) {
 		
 		ItemStack stack = ItemStack.EMPTY;
 		Slot slot = slots.get( index );
@@ -86,7 +86,7 @@ public class BridgeMakerMenu extends AbstractContainerMenu {
 	}
 	
 	@Override
-	public void removed( @Nonnull Player player ) {
+	public void removed( @NotNull Player player ) {
 		
 		super.removed( player );
 		container.stopOpen( player );

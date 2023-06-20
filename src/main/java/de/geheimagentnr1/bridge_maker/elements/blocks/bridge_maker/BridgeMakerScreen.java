@@ -6,19 +6,22 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 
 public class BridgeMakerScreen extends AbstractContainerScreen<BridgeMakerMenu> {
 	
 	
+	@NotNull
 	private static final ResourceLocation GUI = new ResourceLocation(
 		BridgeMakerMod.MODID,
 		"textures/gui/bridge_maker/bridge_maker_gui.png"
 	);
 	
-	public BridgeMakerScreen( BridgeMakerMenu container, Inventory inventory, Component _title ) {
+	public BridgeMakerScreen(
+		@NotNull BridgeMakerMenu container,
+		@NotNull Inventory inventory,
+		@NotNull Component _title ) {
 		
 		super( container, inventory, _title );
 		initScreen();
@@ -30,7 +33,7 @@ public class BridgeMakerScreen extends AbstractContainerScreen<BridgeMakerMenu> 
 	}
 	
 	@Override
-	public void render( @Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick ) {
+	public void render( @NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick ) {
 		
 		renderBackground( guiGraphics );
 		super.render( guiGraphics, mouseX, mouseY, partialTick );
@@ -38,7 +41,7 @@ public class BridgeMakerScreen extends AbstractContainerScreen<BridgeMakerMenu> 
 	}
 	
 	@Override
-	protected void renderBg( @Nonnull GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY ) {
+	protected void renderBg( @NotNull GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY ) {
 		
 		guiGraphics.blit( GUI, leftPos, ( height - imageHeight ) / 2, 0, 0, imageWidth, imageHeight );
 	}
