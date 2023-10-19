@@ -35,7 +35,7 @@ public class BridgeMakerScreen extends AbstractContainerScreen<BridgeMakerMenu> 
 	@Override
 	public void render( @NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick ) {
 		
-		renderBackground( guiGraphics );
+		renderBackground( guiGraphics, mouseX, mouseY, partialTick );
 		super.render( guiGraphics, mouseX, mouseY, partialTick );
 		renderTooltip( guiGraphics, mouseX, mouseY );
 	}
