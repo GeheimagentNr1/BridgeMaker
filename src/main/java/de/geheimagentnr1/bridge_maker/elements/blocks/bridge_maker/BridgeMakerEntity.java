@@ -19,6 +19,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -185,7 +186,7 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 					int index = blockStateNbt.getByte( "Index" );
 					blockStates.set( index,
 						NbtUtils.readBlockState(
-							Objects.requireNonNull( level ).holderLookup( Registries.BLOCK ),
+							BuiltInRegistries.BLOCK.asLookup(),
 							blockStateNbt
 						)
 					);
