@@ -190,7 +190,7 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 					blockStates.set(
 						index,
 						NbtUtils.readBlockState(
-							Objects.requireNonNull( level ).holderLookup( Registries.BLOCK ),
+							BuiltInRegistries.BLOCK.asLookup(),
 							blockStateNbt
 						)
 					);
