@@ -1,1 +1,1 @@
-Ported to 1.20.2 
+- #2: Fix that after reloading a world, items in an inactive bridge maker were gone
