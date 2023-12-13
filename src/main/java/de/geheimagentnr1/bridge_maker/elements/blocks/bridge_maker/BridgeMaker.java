@@ -1,5 +1,6 @@
 package de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker;
 
+import com.mojang.serialization.MapCodec;
 import de.geheimagentnr1.minecraft_forge_api.elements.blocks.BlockItemInterface;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -32,6 +33,9 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 	@NotNull
 	public static final String registry_name = "bridge_maker";
 	
+	@NotNull
+	public static final MapCodec<BridgeMaker> CODEC = simpleCodec( properties -> new BridgeMaker() );
+	
 	public BridgeMaker() {
 		
 		super(
@@ -48,6 +52,12 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 	public BlockEntity newBlockEntity( @NotNull BlockPos pos, @NotNull BlockState state ) {
 		
 		return new BridgeMakerEntity( pos, state );
+	}
+	
+	@Override
+	protected MapCodec<? extends BaseEntityBlock> codec() {
+		
+		return CODEC;
 	}
 	
 	@NotNull
