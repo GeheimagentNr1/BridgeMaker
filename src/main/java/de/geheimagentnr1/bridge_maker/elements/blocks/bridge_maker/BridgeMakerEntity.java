@@ -3,9 +3,10 @@ package de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker;
 import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocksRegisterFactory;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -33,13 +34,13 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 	private static final int CONTAINER_SIZE = 27;
 	
 	@NotNull
-	private final NonNullList<ItemStack> itemStacks = NonNullList.withSize( CONTAINER_SIZE, ItemStack.EMPTY );
+	private NonNullList<ItemStack> itemStacks = NonNullList.withSize( CONTAINER_SIZE, ItemStack.EMPTY );
 	
 	@NotNull
 	private final List<BlockState> blockStates = new ArrayList<>( Arrays.asList( new BlockState[CONTAINER_SIZE] ) );
 	
 	@NotNull
-	private boolean[] setBlocks = new boolean[CONTAINER_SIZE];
+	private List<Boolean> setBlocks = buildEmptyBooleanList();
 	
 	public BridgeMakerEntity( @NotNull BlockPos pos, @NotNull BlockState state ) {
 		
@@ -54,6 +55,52 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 			"container",
 			BuiltInRegistries.BLOCK.getKey( ModBlocksRegisterFactory.BRIDGE_MAKER )
 		) );
+	}
+	
+	@Override
+	protected void applyImplicitComponents( DataComponentInput pComponentInput ) {
+		
+		super.applyImplicitComponents( pComponentInput );
+		setBlocks = pComponentInput.getOrDefault(
+			ModBlocksRegisterFactory.SET_BLOCKS,
+			buildEmptyBooleanList()
+		);
+		List<BlockState> newBlockStates = pComponentInput.getOrDefault(
+			ModBlocksRegisterFactory.BLOCK_STATES,
+			List.of()
+		);
+		for( int index = 0; index < blockStates.size(); index++ ) {
+			BlockState stack = index < newBlockStates.size() ? newBlockStates.get( index ) : null;
+			blockStates.set( index, stack );
+		}
+	}
+	
+	@Override
+	protected void collectImplicitComponents( DataComponentMap.Builder pComponents ) {
+		
+		super.collectImplicitComponents( pComponents );
+		pComponents.set( ModBlocksRegisterFactory.SET_BLOCKS, setBlocks );
+		pComponents.set( ModBlocksRegisterFactory.BLOCK_STATES, blockStates );
+	}
+	
+	@Override
+	public void removeComponentsFromTag( CompoundTag pTag ) {
+		
+		super.removeComponentsFromTag( pTag );
+		pTag.remove( "blockStates" );
+		pTag.remove( "setBlocks" );
+	}
+	
+	@Override
+	protected NonNullList<ItemStack> getItems() {
+		
+		return itemStacks;
+	}
+	
+	@Override
+	protected void setItems( NonNullList<ItemStack> pItemStacks ) {
+		
+		itemStacks = pItemStacks;
 	}
 	
 	@NotNull
@@ -99,9 +146,17 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 	}
 	
 	//package-private
-	boolean[] getSetBlocks() {
+	List<Boolean> getSetBlocks() {
 		
 		return setBlocks;
+	}
+	
+	List<Boolean> buildEmptyBooleanList() {
+		 List<Boolean> list = new ArrayList<>();
+		 for( int i = 0; i < CONTAINER_SIZE; i++ ) {
+			 list.add( false );
+		 }
+		 return list;
 	}
 	
 	@NotNull
@@ -143,7 +198,7 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 	}
 	
 	//package-private
-	void setSetBocksArray( @NotNull boolean[] _setBlocks ) {
+	void setSetBocks( @NotNull List<Boolean> _setBlocks ) {
 		
 		setBlocks = _setBlocks;
 		setChanged();
@@ -171,17 +226,17 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 	}
 	
 	@Override
-	public void load( @NotNull CompoundTag nbt ) {
+	protected void loadAdditional( CompoundTag pTag, HolderLookup.Provider pRegistries ) {
 		
-		super.load( nbt );
-		ContainerHelper.loadAllItems( nbt, itemStacks );
-		byte[] setBlocksByte = nbt.getByteArray( "setBlocks" );
-		if( setBlocksByte.length == setBlocks.length ) {
-			for( int i = 0; i < setBlocks.length; i++ ) {
-				setBlocks[i] = setBlocksByte[i] == 1;
+		super.loadAdditional( pTag, pRegistries );
+		ContainerHelper.loadAllItems( pTag, itemStacks, pRegistries );
+		byte[] setBlocksByte = pTag.getByteArray( "setBlocks" );
+		if( setBlocksByte.length == setBlocks.size() ) {
+			for( int i = 0; i < setBlocks.size(); i++ ) {
+				setBlocks.set( i, setBlocksByte[i] == 1);
 			}
 		}
-		ListTag blockStatesNbt = (ListTag)nbt.get( "blockStates" );
+		ListTag blockStatesNbt = (ListTag)pTag.get( "blockStates" );
 		if( blockStatesNbt != null ) {
 			for( Tag blockStatesElementNbt : blockStatesNbt ) {
 				if( blockStatesElementNbt.getId() == Tag.TAG_COMPOUND ) {
@@ -200,14 +255,15 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 	}
 	
 	@Override
-	public void saveAdditional( @NotNull CompoundTag nbt ) {
+	protected void saveAdditional( CompoundTag pTag, HolderLookup.Provider pRegistries ) {
 		
-		ContainerHelper.saveAllItems( nbt, itemStacks, false );
-		byte[] setBlocksByte = new byte[setBlocks.length];
-		for( int i = 0; i < setBlocks.length; i++ ) {
-			setBlocksByte[i] = (byte)( setBlocks[i] ? 1 : 0 );
+		super.saveAdditional( pTag, pRegistries );
+		ContainerHelper.saveAllItems( pTag, itemStacks, pRegistries );
+		byte[] setBlocksByte = new byte[setBlocks.size()];
+		for( int i = 0; i < setBlocks.size(); i++ ) {
+			setBlocksByte[i] = (byte)( setBlocks.get( i ) ? 1 : 0 );
 		}
-		nbt.putByteArray( "setBlocks", setBlocksByte );
+		pTag.putByteArray( "setBlocks", setBlocksByte );
 		ListTag blockStatesNbt = new ListTag();
 		for( int i = 0; i < blockStates.size(); i++ ) {
 			if( blockStates.get( i ) != null ) {
@@ -216,6 +272,6 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 				blockStatesNbt.add( blockStateNbt );
 			}
 		}
-		nbt.put( "blockStates", blockStatesNbt );
+		pTag.put( "blockStates", blockStatesNbt );
 	}
 }

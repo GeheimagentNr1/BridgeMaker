@@ -17,6 +17,6 @@
 		}
 	},
 	"result":  {
-		"item": "bridge_maker:bridge_maker"
+		"id": "bridge_maker:bridge_maker"
 	}
 }

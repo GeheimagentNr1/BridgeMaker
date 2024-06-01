@@ -8,19 +8,12 @@
 					"type":      "minecraft:item",
 					"functions": [
 						{
-							"function": "minecraft:copy_name",
-							"source":   "block_entity"
-						},
-						{
-							"function": "minecraft:copy_nbt",
-							"source":   "block_entity",
-							"ops":      [
-								{
-									"source": "Items",
-									"target": "BlockEntityTag.Items",
-									"op":     "replace"
-								}
-							]
+							"function": "minecraft:copy_components",
+							"include": [
+								"minecraft:custom_name",
+								"minecraft:container"
+							],
+							"source": "block_entity"
 						}
 					],
 					"name":      "bridge_maker:bridge_maker"
