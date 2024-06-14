@@ -13,6 +13,7 @@ import de.geheimagentnr1.minecraft_forge_api.registry.RegistryHelper;
 import de.geheimagentnr1.minecraft_forge_api.registry.RegistryKeys;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.Block;
@@ -55,7 +56,6 @@ public class ModBlocksRegisterFactory extends BlocksRegisterFactory {
 			.networkSynchronized( StreamCodec.of(
 				CodeNetworkHelper::toNetwork,
 				CodeNetworkHelper::fromNetwork
-			
 			) )
 			.build();
 	
@@ -63,6 +63,7 @@ public class ModBlocksRegisterFactory extends BlocksRegisterFactory {
 	public static final DataComponentType<List<Boolean>> SET_BLOCKS =
 		DataComponentType.<List<Boolean>> builder()
 			.persistent( Codec.BOOL.listOf() )
+			.networkSynchronized( ByteBufCodecs.BOOL.apply( ByteBufCodecs.list() ) )
 			.build();
 	
 	@ObjectHolder( registryName = RegistryKeys.MENU_TYPES,

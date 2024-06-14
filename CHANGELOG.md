@@ -1,1 +1,1 @@
-Ported to 1.20.6 
+- Fix middle click coping of Bridge Maker was not working in creative
