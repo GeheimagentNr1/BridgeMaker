@@ -13,7 +13,7 @@ public class BridgeMakerScreen extends AbstractContainerScreen<BridgeMakerMenu> 
 	
 	
 	@NotNull
-	private static final ResourceLocation GUI = new ResourceLocation(
+	private static final ResourceLocation GUI = ResourceLocation.fromNamespaceAndPath(
 		BridgeMakerMod.MODID,
 		"textures/gui/bridge_maker/bridge_maker_gui.png"
 	);
