@@ -2,12 +2,12 @@ package de.geheimagentnr1.bridge_maker.elements.creative_mod_tabs;
 
 import de.geheimagentnr1.bridge_maker.config.ClientConfig;
 import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocksRegisterFactory;
-import de.geheimagentnr1.minecraft_forge_api.elements.creative_mod_tabs.CreativeModeTabFactory;
-import de.geheimagentnr1.minecraft_forge_api.elements.creative_mod_tabs.CreativeModeTabRegisterFactory;
+import de.geheimagentnr1.minecraft_modding_api.elements.creative_mod_tabs.CreativeModeTabFactory;
+import de.geheimagentnr1.minecraft_modding_api.elements.creative_mod_tabs.CreativeModeTabRegisterFactory;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

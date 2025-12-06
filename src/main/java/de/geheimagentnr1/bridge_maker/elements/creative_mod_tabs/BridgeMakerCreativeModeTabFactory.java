@@ -2,9 +2,10 @@ package de.geheimagentnr1.bridge_maker.elements.creative_mod_tabs;
 
 import de.geheimagentnr1.bridge_maker.BridgeMakerMod;
 import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocksRegisterFactory;
-import de.geheimagentnr1.minecraft_forge_api.elements.creative_mod_tabs.CreativeModeTabFactory;
-import de.geheimagentnr1.minecraft_forge_api.registry.RegistryEntry;
+import de.geheimagentnr1.minecraft_modding_api.elements.creative_mod_tabs.CreativeModeTabFactory;
+import de.geheimagentnr1.minecraft_modding_api.registry.RegistryEntry;
 import lombok.RequiredArgsConstructor;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
@@ -21,9 +22,9 @@ class BridgeMakerCreativeModeTabFactory implements CreativeModeTabFactory {
 	
 	@NotNull
 	@Override
-	public String getRegistryName() {
+	public ResourceLocation getRegistryName() {
 		
-		return BridgeMakerMod.MODID;
+		return ResourceLocation.fromNamespaceAndPath( BridgeMakerMod.MODID, BridgeMakerMod.MODID );
 	}
 	
 	@NotNull

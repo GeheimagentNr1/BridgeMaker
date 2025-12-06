@@ -1,7 +1,7 @@
 package de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker;
 
 import com.mojang.serialization.MapCodec;
-import de.geheimagentnr1.minecraft_forge_api.elements.blocks.BlockItemInterface;
+import de.geheimagentnr1.minecraft_modding_api.elements.blocks.BlockItemInterface;
 import lombok.extern.log4j.Log4j2;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
