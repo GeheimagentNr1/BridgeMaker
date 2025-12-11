@@ -1,48 +1,31 @@
 package de.geheimagentnr1.bridge_maker.elements.creative_mod_tabs;
 
-import de.geheimagentnr1.bridge_maker.config.ClientConfig;
 import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocksRegisterFactory;
-import de.geheimagentnr1.minecraft_modding_api.elements.creative_mod_tabs.CreativeModeTabFactory;
-import de.geheimagentnr1.minecraft_modding_api.elements.creative_mod_tabs.CreativeModeTabRegisterFactory;
+import net.minecraft.core.registries.Registries;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 
 @RequiredArgsConstructor
-public class ModCreativeTabsRegisterFactory extends CreativeModeTabRegisterFactory {
+public class ModCreativeTabsRegisterFactory {
 	
-	
-	@NotNull
-	private final ClientConfig clientConfig;
 	
 	@NotNull
 	private final ModBlocksRegisterFactory modBlocksRegisterFactory;
 	
-	@NotNull
-	@Override
-	protected List<CreativeModeTabFactory> factories() {
-		
-		if( clientConfig.getUseVanillaTab() ) {
-			return List.of();
-		} else {
-			return List.of(
-				new BridgeMakerCreativeModeTabFactory( modBlocksRegisterFactory )
-			);
-		}
-	}
-	
 	@SubscribeEvent
-	@Override
-	public void handleBuildCreativeModeTabContentsEvent( @NotNull BuildCreativeModeTabContentsEvent event ) {
+	public void handleRegistryEvent( @NotNull RegisterEvent event ) {
 		
-		if( clientConfig.getUseVanillaTab() ) {
-			modBlocksRegisterFactory.getBlocks().forEach( registryEntry ->
-				event.accept( new ItemStack( registryEntry.getValue().asItem() ) )
+		if( event.getRegistryKey().equals( Registries.CREATIVE_MODE_TAB ) ) {
+			BridgeMakerCreativeModeTabFactory factory = new BridgeMakerCreativeModeTabFactory( modBlocksRegisterFactory );
+			event.register(
+				Registries.CREATIVE_MODE_TAB,
+				registerHelper -> registerHelper.register(
+					factory.getRegistryName(),
+					factory.get()
+				)
 			);
 		}
 	}

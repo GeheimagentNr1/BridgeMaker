@@ -7,11 +7,13 @@ import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerEn
 import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerMenu;
 import de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker.BridgeMakerScreen;
 import de.geheimagentnr1.bridge_maker.util.CodeNetworkHelper;
-import de.geheimagentnr1.minecraft_modding_api.elements.blocks.BlocksRegisterFactory;
-import de.geheimagentnr1.minecraft_modding_api.registry.RegistryEntry;
-import de.geheimagentnr1.minecraft_modding_api.registry.RegistryHelper;
+import de.geheimagentnr1.bridge_maker.registry.RegistryEntry;
+import de.geheimagentnr1.bridge_maker.registry.RegistryHelper;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.minecraft.core.component.DataComponentType;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.inventory.MenuType;
@@ -25,8 +27,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 
+import lombok.Getter;
+
+
 @SuppressWarnings( "StaticNonFinalField" )
-public class ModBlocksRegisterFactory extends BlocksRegisterFactory {
+public class ModBlocksRegisterFactory {
 	
 	//TODO:
 	// B - Block Textur fertig
@@ -38,6 +43,9 @@ public class ModBlocksRegisterFactory extends BlocksRegisterFactory {
 	// R - Rezept fertig
 	// L - Loottable fertig
 	// T - Tags fertig
+	
+	@Getter
+	private List<RegistryEntry<Block>> blocks;
 	
 	public static BridgeMaker BRIDGE_MAKER;
 	
@@ -62,30 +70,58 @@ public class ModBlocksRegisterFactory extends BlocksRegisterFactory {
 	
 	public static MenuType<BridgeMakerMenu> BRIDGE_MAKER_CONTAINER;
 	
-	@NotNull
-	@Override
-	protected List<RegistryEntry<Block>> blocks() {
+	@SubscribeEvent
+	public void handleRegistryEvent( @NotNull RegisterEvent event ) {
 		
-		return List.of(//BCPFINRLT
-			RegistryEntry.create( BridgeMakerMod.MODID, BridgeMaker.registry_name, new BridgeMaker() )//BCPFINRLT
-		);
+		RegistryHelper.registerElements( event, Registries.BLOCK, this::blocks );
+		
+		if( event.getRegistryKey().equals( Registries.ITEM ) ) {
+			event.register(
+				Registries.ITEM, ( registerHelper ) -> {
+					blocks().forEach( ( registryEntry ) -> {
+						Block block = registryEntry.getValue();
+						if( block instanceof BlockItemInterface blockItem ) {
+							registerHelper.register(
+								registryEntry.getRegistryName(),
+								blockItem.getBlockItem( block, new Item.Properties() )
+							);
+						}
+					} );
+				}
+			);
+		}
+		RegistryHelper.registerElements( event, Registries.BLOCK_ENTITY_TYPE, this::blockEntityTypes );
+		RegistryHelper.registerElements( event, Registries.MENU, this::menuTypes );
+		RegistryHelper.registerElements( event, Registries.DATA_COMPONENT_TYPE, this::dataComponentTypes );
 	}
 	
 	@NotNull
-	@Override
-	protected List<RegistryEntry<BlockEntityType<?>>> blockEntityTypes() {
+	private List<RegistryEntry<Block>> blocks() {
 		
+		if( blocks == null ) {
+			BRIDGE_MAKER = new BridgeMaker();
+			blocks = List.of(//BCPFINRLT
+				RegistryEntry.create( BridgeMakerMod.MODID, BridgeMaker.registry_name, BRIDGE_MAKER )//BCPFINRLT
+			);
+		}
+		return blocks;
+	}
+	
+	@NotNull
+	private List<RegistryEntry<BlockEntityType<?>>> blockEntityTypes() {
+		
+		BRIDGE_MAKER_ENTITY = RegistryHelper.buildBlockEntity( BridgeMaker.registry_name, BridgeMakerEntity::new, BRIDGE_MAKER );
 		return List.of(
 			RegistryEntry.create(
 				BridgeMakerMod.MODID,
 				BridgeMaker.registry_name,
-				RegistryHelper.buildBlockEntity( BridgeMaker.registry_name, BridgeMakerEntity::new, BRIDGE_MAKER )
+				BRIDGE_MAKER_ENTITY
 			)
 		);
 	}
 	
-	@Override
-	protected @NotNull List<RegistryEntry<DataComponentType<?>>> dataComponentTypes() {
+	@NotNull
+	private List<RegistryEntry<DataComponentType<?>>> dataComponentTypes() {
 		
 		return List.of(
 			RegistryEntry.create(
@@ -102,14 +138,14 @@ public class ModBlocksRegisterFactory extends BlocksRegisterFactory {
 	}
 	
 	@NotNull
-	@Override
-	protected List<RegistryEntry<MenuType<?>>> menuTypes() {
+	private List<RegistryEntry<MenuType<?>>> menuTypes() {
 		
+		BRIDGE_MAKER_CONTAINER = IMenuTypeExtension.create( ( windowId, inv, data ) -> new BridgeMakerMenu( windowId, inv ) );
 		return List.of(
 			RegistryEntry.create(
 				BridgeMakerMod.MODID,
 				BridgeMaker.registry_name,
-				IMenuTypeExtension.create( ( windowId, inv, data ) -> new BridgeMakerMenu( windowId, inv ) )
+				BRIDGE_MAKER_CONTAINER
 			)
 		);
 	}

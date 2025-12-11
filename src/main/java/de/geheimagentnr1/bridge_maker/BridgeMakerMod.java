@@ -1,10 +1,8 @@
 package de.geheimagentnr1.bridge_maker;
 
 
-import de.geheimagentnr1.bridge_maker.config.ClientConfig;
 import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocksRegisterFactory;
 import de.geheimagentnr1.bridge_maker.elements.creative_mod_tabs.ModCreativeTabsRegisterFactory;
-import de.geheimagentnr1.minecraft_modding_api.AbstractMod;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -12,29 +10,20 @@ import org.jetbrains.annotations.NotNull;
 
 
 @Mod( BridgeMakerMod.MODID )
-public class BridgeMakerMod extends AbstractMod {
+public class BridgeMakerMod {
 	
 	
 	@NotNull
 	public static final String MODID = "bridge_maker";
 	
+	@SuppressWarnings( "unused" )
 	public BridgeMakerMod( IEventBus modEventBus, ModContainer modContainer ) {
 		
-		super( modEventBus, modContainer );
-	}
-	
-	@NotNull
-	@Override
-	public String getModId() {
+		ModBlocksRegisterFactory modBlocksRegisterFactory = new ModBlocksRegisterFactory();
+		modEventBus.register( modBlocksRegisterFactory );
 		
-		return MODID;
-	}
-	
-	@Override
-	protected void initMod() {
-		
-		ClientConfig clientConfig = registerConfig( ClientConfig::new );
-		ModBlocksRegisterFactory modBlocksRegisterFactory = registerEventHandler( new ModBlocksRegisterFactory() );
-		registerEventHandler( new ModCreativeTabsRegisterFactory( clientConfig, modBlocksRegisterFactory ) );
+		ModCreativeTabsRegisterFactory modCreativeTabsRegisterFactory = 
+			new ModCreativeTabsRegisterFactory( modBlocksRegisterFactory );
+		modEventBus.register( modCreativeTabsRegisterFactory );
 	}
 }
