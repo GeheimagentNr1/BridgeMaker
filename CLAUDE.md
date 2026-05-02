@@ -18,23 +18,34 @@ Keine Mod-Abhängigkeiten - eigenständiger Mod.
 
 ```
 src/main/java/de/geheimagentnr1/bridge_maker/
-├── BridgeMakerMod.java                    # Haupt-Mod-Klasse
+├── BridgeMakerMod.java                                        # Haupt-Mod-Klasse
 ├── elements/
 │   ├── blocks/
-│   │   ├── BlockItemInterface.java        # Interface für Block-Items
-│   │   └── ModBlocksRegisterFactory.java  # Block-Registry
-│   └── creative_mod_tabs/                 # Creative-Tab Registration
+│   │   ├── BlockItemInterface.java                            # Interface für Block-Items
+│   │   ├── ModBlocksRegisterFactory.java                      # Block-Registry
+│   │   └── bridge_maker/
+│   │       ├── BridgeMaker.java                               # Block-Klasse
+│   │       ├── BridgeMakerEntity.java                         # Block-Entity
+│   │       ├── BridgeMakerMenu.java                           # Container-Menu
+│   │       ├── BridgeMakerScreen.java                         # Client-Screen
+│   │       └── BridgeMakerSlot.java                           # Inventory-Slot
+│   ├── creative_mod_tabs/
+│   │   ├── BridgeMakerCreativeModeTabFactory.java
+│   │   ├── CreativeModeTabFactory.java
+│   │   └── ModCreativeTabsRegisterFactory.java
+│   └── gametests/
+│       └── BridgeMakerGameTests.java
 ├── registry/
-│   ├── RegistryEntry.java                 # Registry-Utility
-│   └── RegistryHelper.java                # Registry-Helper
+│   ├── RegistryEntry.java                                     # Registry-Utility
+│   └── RegistryHelper.java                                    # Registry-Helper
 └── util/
-    └── CodeNetworkHelper.java             # Netzwerk-Utilities
+    └── CodeNetworkHelper.java                                 # Netzwerk-Utilities
 ```
 
 ## Besonderheiten
 
+- **Block-Entity mit GUI**: `BridgeMakerEntity`, `BridgeMakerMenu`, `BridgeMakerScreen` für Inventar-UI
 - **Eigenes Registry-System**: Eigene `RegistryEntry` und `RegistryHelper` Klassen
-- **Block-Items**: Blöcke mit zugehörigen Items
 
 ## Code-Stil
 
@@ -103,3 +114,7 @@ Der Workflow `.github/workflows/build-and-test.yml` führt automatisch aus:
 | Commands | ✅ | GameTest |
 | Block/Item-Verhalten | ✅ | GameTest |
 | Multi-MC-Version | ⚠️ Pro Branch | CI Matrix |
+
+## Referenzen
+
+- [NeoForge Migration Primer](https://docs.neoforged.net/primer/docs/) — Dokumentiert API-Aenderungen zwischen Minecraft/NeoForge-Versionen; nuetzlich fuer die Pruefung von Breaking Changes beim Upgrade auf neue Versionen
