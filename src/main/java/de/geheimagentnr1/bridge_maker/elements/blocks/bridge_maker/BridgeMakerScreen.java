@@ -3,6 +3,7 @@ package de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker;
 import de.geheimagentnr1.bridge_maker.BridgeMakerMod;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -43,6 +44,17 @@ public class BridgeMakerScreen extends AbstractContainerScreen<BridgeMakerMenu> 
 	@Override
 	protected void renderBg( @NotNull GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY ) {
 		
-		guiGraphics.blit( GUI, leftPos, ( height - imageHeight ) / 2, 0, 0, imageWidth, imageHeight );
+		guiGraphics.blit(
+			RenderType::guiTextured,
+			GUI,
+			leftPos,
+			( height - imageHeight ) / 2,
+			0.0F,
+			0.0F,
+			imageWidth,
+			imageHeight,
+			256,
+			256
+		);
 	}
 }

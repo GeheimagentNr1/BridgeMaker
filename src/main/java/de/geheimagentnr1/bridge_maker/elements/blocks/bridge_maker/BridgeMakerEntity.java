@@ -5,8 +5,10 @@ import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -58,7 +60,7 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 	}
 	
 	@Override
-	protected void applyImplicitComponents( DataComponentInput pComponentInput ) {
+	protected void applyImplicitComponents( DataComponentGetter pComponentInput ) {
 		
 		super.applyImplicitComponents( pComponentInput );
 		setBlocks = pComponentInput.getOrDefault(
@@ -89,6 +91,13 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 		super.removeComponentsFromTag( pTag );
 		pTag.remove( "blockStates" );
 		pTag.remove( "setBlocks" );
+	}
+	
+	//Since 1.21.5 container block entities drop their content on removal by default,
+	//the content is kept in the dropped item instead (loot table copies minecraft:container)
+	@Override
+	public void preRemoveSideEffects( @NotNull BlockPos pos, @NotNull BlockState state ) {
+	
 	}
 	
 	@Override
@@ -230,22 +239,21 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 		
 		super.loadAdditional( pTag, pRegistries );
 		ContainerHelper.loadAllItems( pTag, itemStacks, pRegistries );
-		byte[] setBlocksByte = pTag.getByteArray( "setBlocks" );
-		if( setBlocksByte.length == setBlocks.size() ) {
-			for( int i = 0; i < setBlocks.size(); i++ ) {
-				setBlocks.set( i, setBlocksByte[i] == 1);
+		pTag.getByteArray( "setBlocks" ).ifPresent( setBlocksByte -> {
+			if( setBlocksByte.length == setBlocks.size() ) {
+				for( int i = 0; i < setBlocks.size(); i++ ) {
+					setBlocks.set( i, setBlocksByte[i] == 1);
+				}
 			}
-		}
-		ListTag blockStatesNbt = (ListTag)pTag.get( "blockStates" );
-		if( blockStatesNbt != null ) {
+		} );
+		if( pTag.get( "blockStates" ) instanceof ListTag blockStatesNbt ) {
 			for( Tag blockStatesElementNbt : blockStatesNbt ) {
-				if( blockStatesElementNbt.getId() == Tag.TAG_COMPOUND ) {
-					CompoundTag blockStateNbt = ( (CompoundTag)blockStatesElementNbt );
-					int index = blockStateNbt.getByte( "Index" );
+				if( blockStatesElementNbt instanceof CompoundTag blockStateNbt ) {
+					int index = blockStateNbt.getByteOr( "Index", (byte)0 );
 					blockStates.set(
 						index,
 						NbtUtils.readBlockState(
-							BuiltInRegistries.BLOCK.asLookup(),
+							pRegistries.lookupOrThrow( Registries.BLOCK ),
 							blockStateNbt
 						)
 					);
