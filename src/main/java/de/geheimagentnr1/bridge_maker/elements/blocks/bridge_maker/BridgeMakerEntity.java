@@ -7,6 +7,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -245,7 +246,7 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 					blockStates.set(
 						index,
 						NbtUtils.readBlockState(
-							BuiltInRegistries.BLOCK.asLookup(),
+							pRegistries.lookupOrThrow( Registries.BLOCK ),
 							blockStateNbt
 						)
 					);

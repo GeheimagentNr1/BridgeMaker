@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,17 +39,21 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 	public static final String registry_name = "bridge_maker";
 	
 	@NotNull
-	private static final MapCodec<BridgeMaker> CODEC = simpleCodec( properties -> new BridgeMaker() );
+	private static final MapCodec<BridgeMaker> CODEC = simpleCodec( BridgeMaker::new );
 	
-	public BridgeMaker() {
+	public BridgeMaker( @NotNull Properties properties ) {
 		
-		super(
-			Properties.of()
-				.mapColor( MapColor.METAL )
-				.strength( 5.0F, 6.0F )
-				.requiresCorrectToolForDrops()
-				.sound( SoundType.METAL )
-		);
+		super( properties );
+	}
+	
+	@NotNull
+	public static Properties createProperties() {
+		
+		return Properties.of()
+			.mapColor( MapColor.METAL )
+			.strength( 5.0F, 6.0F )
+			.requiresCorrectToolForDrops()
+			.sound( SoundType.METAL );
 	}
 	
 	@Nullable
@@ -106,7 +112,7 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 		@NotNull Level level,
 		@NotNull BlockPos pos,
 		@NotNull Block neighbarBlock,
-		@NotNull BlockPos neighborPos,
+		@Nullable Orientation orientation,
 		boolean isMoving ) {
 		
 		if( !level.isClientSide() ) {
@@ -172,6 +178,18 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 		}
 	}
 	
+	//BlockEntity.saveToItem was removed in 1.21.4, this is its 1.21.2 implementation
+	@NotNull
+	private static ItemStack saveToItem( @NotNull BlockEntity blockEntity, @NotNull ItemStack stack, @NotNull Level level ) {
+		
+		CompoundTag tag = blockEntity.saveCustomOnly( level.registryAccess() );
+		blockEntity.removeComponentsFromTag( tag );
+		ItemStack result = new ItemStack( stack.getItem(), stack.getCount() );
+		BlockItem.setBlockEntityData( result, blockEntity.getType(), tag );
+		result.applyComponents( blockEntity.collectComponents() );
+		return result;
+	}
+	
 	private List<Boolean> unpower(
 		@NotNull BridgeMakerEntity bridgeMakerEntity,
 		List<Boolean> setBlocks,
@@ -216,7 +234,7 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 					}
 					BlockEntity blockEntity = level.getBlockEntity( collectPos );
 					if( blockEntity != null ) {
-						blockEntity.saveToItem( blockItemStack, level.registryAccess() );
+						blockItemStack = saveToItem( blockEntity, blockItemStack, level );
 					}
 					if( blockItemStack.getItem() instanceof BlockItem ) {
 						bridgeMakerEntity.setItem( i, blockItemStack, blockStates[i] );

@@ -1,0 +1,6 @@
+{
+	"model": {
+		"type":  "minecraft:model",
+		"model": "bridge_maker:block/bridge_maker/bridge_maker_off"
+	}
+}

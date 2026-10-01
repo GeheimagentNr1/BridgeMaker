@@ -1,9 +1,7 @@
 package de.geheimagentnr1.bridge_maker.registry;
 
-import net.minecraft.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.util.datafix.fixes.References;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -34,14 +32,11 @@ public class RegistryHelper {
 	}
 	
 	@NotNull
-	@SuppressWarnings( "unchecked" )
 	public static <T extends BlockEntity> BlockEntityType<T> buildBlockEntity(
 		@NotNull String registryName,
 		@NotNull BlockEntityType.BlockEntitySupplier<T> blockEntitySupplier,
 		@NotNull Block... blocks ) {
-		
-		//noinspection DataFlowIssue Null is valid
-		return (BlockEntityType<T>) BlockEntityType.Builder.of( blockEntitySupplier, blocks )
-			.build( Util.fetchChoiceType( References.BLOCK_ENTITY, registryName ) );
+
+		return new BlockEntityType<>( blockEntitySupplier, blocks );
 	}
 }
