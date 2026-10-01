@@ -10,6 +10,8 @@ import de.geheimagentnr1.bridge_maker.util.CodeNetworkHelper;
 import de.geheimagentnr1.bridge_maker.registry.RegistryEntry;
 import de.geheimagentnr1.bridge_maker.registry.RegistryHelper;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.minecraft.core.component.DataComponentType;
@@ -83,7 +85,12 @@ public class ModBlocksRegisterFactory {
 						if( block instanceof BlockItemInterface blockItem ) {
 							registerHelper.register(
 								registryEntry.getRegistryName(),
-								blockItem.getBlockItem( block, new Item.Properties() )
+								blockItem.getBlockItem(
+									block,
+									new Item.Properties()
+										.setId( ResourceKey.create( Registries.ITEM, registryEntry.getRegistryName() ) )
+										.useBlockDescriptionPrefix()
+								)
 							);
 						}
 					} );
@@ -99,7 +106,10 @@ public class ModBlocksRegisterFactory {
 	private List<RegistryEntry<Block>> blocks() {
 		
 		if( blocks == null ) {
-			BRIDGE_MAKER = new BridgeMaker();
+			BRIDGE_MAKER = new BridgeMaker( BridgeMaker.createProperties().setId( ResourceKey.create(
+				Registries.BLOCK,
+				ResourceLocation.fromNamespaceAndPath( BridgeMakerMod.MODID, BridgeMaker.registry_name )
+			) ) );
 			blocks = List.of(//BCPFINRLT
 				RegistryEntry.create( BridgeMakerMod.MODID, BridgeMaker.registry_name, BRIDGE_MAKER )//BCPFINRLT
 			);

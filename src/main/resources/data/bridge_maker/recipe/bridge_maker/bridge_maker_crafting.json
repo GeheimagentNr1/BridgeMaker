@@ -6,15 +6,9 @@
 		"SSS"
 	],
 	"key":     {
-		"I": {
-			"item": "minecraft:iron_bars"
-		},
-		"S": {
-			"item": "minecraft:smooth_stone"
-		},
-		"R": {
-			"item": "minecraft:redstone"
-		}
+		"I": "minecraft:iron_bars",
+		"S": "minecraft:smooth_stone",
+		"R": "minecraft:redstone"
 	},
 	"result":  {
 		"id": "bridge_maker:bridge_maker"
