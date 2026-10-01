@@ -2,6 +2,7 @@ package de.geheimagentnr1.bridge_maker.util;
 
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +19,7 @@ public class CodeNetworkHelper {
 		int count = buffer.readVarInt();
 		List<BlockState> blockStates = new ArrayList<>();
 		for( int i = 0; i < count; i++ ) {
-			BlockState state = buffer.readJsonWithCodec( BlockState.CODEC );
+			BlockState state = Block.stateById( buffer.readVarInt() );
 			blockStates.add( state );
 		}
 		return blockStates;
@@ -28,12 +29,7 @@ public class CodeNetworkHelper {
 		
 		buffer.writeVarInt( states.size() );
 		for( BlockState state : states ) {
-			boolean hasValue = state != null;
-			if( hasValue ) {
-				buffer.writeJsonWithCodec( BlockState.CODEC, state );
-			} else {
-				buffer.writeJsonWithCodec( BlockState.CODEC, Blocks.AIR.defaultBlockState() );
-			}
+			buffer.writeVarInt( Block.getId( state == null ? Blocks.AIR.defaultBlockState() : state ) );
 		}
 	}
 }

@@ -1,17 +1,15 @@
 package de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker;
 
+import com.mojang.serialization.Codec;
 import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocksRegisterFactory;
-import net.minecraft.Util;
+import de.geheimagentnr1.bridge_maker.util.BlockStateCodecHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Util;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -20,8 +18,11 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,7 +59,7 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 	}
 	
 	@Override
-	protected void applyImplicitComponents( DataComponentInput pComponentInput ) {
+	protected void applyImplicitComponents( DataComponentGetter pComponentInput ) {
 		
 		super.applyImplicitComponents( pComponentInput );
 		setBlocks = pComponentInput.getOrDefault(
@@ -84,11 +85,18 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 	}
 	
 	@Override
-	public void removeComponentsFromTag( CompoundTag pTag ) {
+	public void removeComponentsFromTag( @NotNull ValueOutput output ) {
 		
-		super.removeComponentsFromTag( pTag );
-		pTag.remove( "blockStates" );
-		pTag.remove( "setBlocks" );
+		super.removeComponentsFromTag( output );
+		output.discard( "blockStates" );
+		output.discard( "setBlocks" );
+	}
+	
+	//Since 1.21.5 container block entities drop their content on removal by default,
+	//the content is kept in the dropped item instead (loot table copies minecraft:container)
+	@Override
+	public void preRemoveSideEffects( @NotNull BlockPos pos, @NotNull BlockState state ) {
+	
 	}
 	
 	@Override
@@ -226,52 +234,40 @@ public class BridgeMakerEntity extends BaseContainerBlockEntity {
 	}
 	
 	@Override
-	protected void loadAdditional( CompoundTag pTag, HolderLookup.Provider pRegistries ) {
+	protected void loadAdditional( @NotNull ValueInput input ) {
 		
-		super.loadAdditional( pTag, pRegistries );
-		ContainerHelper.loadAllItems( pTag, itemStacks, pRegistries );
-		byte[] setBlocksByte = pTag.getByteArray( "setBlocks" );
-		if( setBlocksByte.length == setBlocks.size() ) {
-			for( int i = 0; i < setBlocks.size(); i++ ) {
-				setBlocks.set( i, setBlocksByte[i] == 1);
-			}
-		}
-		ListTag blockStatesNbt = (ListTag)pTag.get( "blockStates" );
-		if( blockStatesNbt != null ) {
-			for( Tag blockStatesElementNbt : blockStatesNbt ) {
-				if( blockStatesElementNbt.getId() == Tag.TAG_COMPOUND ) {
-					CompoundTag blockStateNbt = ( (CompoundTag)blockStatesElementNbt );
-					int index = blockStateNbt.getByte( "Index" );
-					blockStates.set(
-						index,
-						NbtUtils.readBlockState(
-							BuiltInRegistries.BLOCK.asLookup(),
-							blockStateNbt
-						)
-					);
+		super.loadAdditional( input );
+		ContainerHelper.loadAllItems( input, itemStacks );
+		input.read( "setBlocks", Codec.BYTE_BUFFER ).ifPresent( setBlocksBuffer -> {
+			if( setBlocksBuffer.remaining() == setBlocks.size() ) {
+				for( int i = 0; i < setBlocks.size(); i++ ) {
+					setBlocks.set( i, setBlocksBuffer.get( i ) == 1 );
 				}
 			}
-		}
+		} );
+		input.childrenListOrEmpty( "blockStates" ).forEach( blockStateInput -> {
+			int index = blockStateInput.getByteOr( "Index", (byte)0 );
+			blockStateInput.read( BlockStateCodecHelper.MAP_CODEC ).ifPresent( state -> blockStates.set( index, state ) );
+		} );
 	}
 	
 	@Override
-	protected void saveAdditional( CompoundTag pTag, HolderLookup.Provider pRegistries ) {
+	protected void saveAdditional( @NotNull ValueOutput output ) {
 		
-		super.saveAdditional( pTag, pRegistries );
-		ContainerHelper.saveAllItems( pTag, itemStacks, pRegistries );
+		super.saveAdditional( output );
+		ContainerHelper.saveAllItems( output, itemStacks );
 		byte[] setBlocksByte = new byte[setBlocks.size()];
 		for( int i = 0; i < setBlocks.size(); i++ ) {
 			setBlocksByte[i] = (byte)( setBlocks.get( i ) ? 1 : 0 );
 		}
-		pTag.putByteArray( "setBlocks", setBlocksByte );
-		ListTag blockStatesNbt = new ListTag();
+		output.store( "setBlocks", Codec.BYTE_BUFFER, ByteBuffer.wrap( setBlocksByte ) );
+		ValueOutput.ValueOutputList blockStatesOutput = output.childrenList( "blockStates" );
 		for( int i = 0; i < blockStates.size(); i++ ) {
 			if( blockStates.get( i ) != null ) {
-				CompoundTag blockStateNbt = NbtUtils.writeBlockState( blockStates.get( i ) );
-				blockStateNbt.putByte( "Index", (byte)i );
-				blockStatesNbt.add( blockStateNbt );
+				ValueOutput blockStateOutput = blockStatesOutput.addChild();
+				blockStateOutput.store( BlockStateCodecHelper.MAP_CODEC, blockStates.get( i ) );
+				blockStateOutput.putByte( "Index", (byte)i );
 			}
 		}
-		pTag.put( "blockStates", blockStatesNbt );
 	}
 }

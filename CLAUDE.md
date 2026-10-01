@@ -2,13 +2,23 @@
 
 ## Projekt-Übersicht
 
-**Bridge Maker** ist ein NeoForge Minecraft Mod für Minecraft 1.21.1.
+**Bridge Maker** ist ein NeoForge Minecraft Mod.
 - **Mod ID**: `bridge_maker`
 - **Package**: `de.geheimagentnr1.bridge_maker`
-- **Java Version**: 21
-- **NeoForge Version**: 21.1.x
+- **Java Version**: 21 (`develop_26.1`: 25, `jdk-25.0.4.7-hotspot`)
 
-Fügt den Bridge Maker hinzu, der Blöcke in einer Entfernung von 27 Blöcken platzieren/abbauen kann.
+Fügt den Bridge Maker hinzu: ein Block mit 27 Slots, der bei Redstone-Signal die eingelegten Blöcke in Blickrichtung als Brücke setzt (Block-Zustand und BlockEntity-Daten, z. B. Shulker-Inhalt, bleiben erhalten) und sie beim Ausschalten wieder einsammelt.
+
+| Branch | MC | Range | NeoForge (kompiliert gegen) | Grund für den Schnitt |
+|---|---|---|---|---|
+| `develop_1.21.1` | 1.21.1 | `[1.21.1,1.21.2)` | 21.1.x | |
+| `develop_1.21.2` | 1.21.2 - 1.21.4 | `[1.21.2,1.21.5)` | `21.2.1-beta` | Block-/Item-IDs (`setId`, `useBlockDescriptionPrefix`), `neighborChanged(.., Orientation, ..)`, `new BlockEntityType<>(..)`. `BlockEntity.saveToItem` (in 1.21.4 entfernt) ist in `BridgeMaker.saveToItem` nachgebaut. `assets/bridge_maker/items/bridge_maker.json` für 1.21.4 |
+| `develop_1.21.5` | 1.21.5 | `[1.21.5,1.21.6)` | `21.5.98` | `applyImplicitComponents(DataComponentGetter)`, `CompoundTag`-Getter mit `Optional`; `preRemoveSideEffects` leer überschrieben (sonst wirft Vanilla ab 1.21.5 den Inhalt beim Abbauen aus) |
+| `develop_1.21.6` | 1.21.6 - 1.21.10 | `[1.21.6,1.21.11)` | `21.6.20-beta` | `ValueInput`/`ValueOutput` (NBT-Format unverändert), `RenderPipelines.GUI_TEXTURED`, kein eigener `renderBackground`-Aufruf, BlockStates im Netzwerk per ID. Keine `Container.startOpen/stopOpen`-Aufrufe (Signatur ändert sich in 1.21.9, die Methoden sind hier leer) |
+| `develop_1.21.11` | 1.21.11 | `[1.21.11,1.21.12)` | `21.11.45` | Aufbauend auf `develop_1.21.6`: `ResourceLocation` → `Identifier`, `net.minecraft.Util` → `net.minecraft.util.Util` |
+| `develop_26.1` | 26.1 - 26.3 | `[26.1,27)` | `26.1.0.19-beta` (Java 25) | Aufbauend auf `develop_1.21.11`; Tooling Java 25 / Gradle 9.2.1 / moddev 2.0.147 / Lombok 1.18.48. Screen: `GuiGraphics` → `GuiGraphicsExtractor`, `render`/`renderBg` → `extractBackground` (Tooltips zeichnet `AbstractContainerScreen` selbst), Größe über den Konstruktor (`imageHeight` final). Ein Jar für 26.1 - 26.3 dank zweier Cross-fixes ohne Verhaltensänderung: `codec()` ohne `@Override`/`simpleCodec` (in 26.3 entfernt), GUI-Textur über `blit(Identifier, x0, y0, x1, y1, u0, u1, v0, v1)` statt der `RenderPipeline`-Überladung (`RenderPipeline` zieht in 26.3 nach `com.mojang.renderpearl` um). Außerdem zwei Datenformat-Fixes für 26.3: eigener `util/BlockStateCodecHelper` (festes `Name`/`Properties`-Format für BlockEntity-NBT und die Komponente `bridge_maker:block_states`, weil `BlockState.CODEC` in 26.3 ein anderes Format schreibt) und Loot-Table mit `functions`/`conditions` (bis 26.2) **und** `modifier`/`condition` (ab 26.3) |
+
+Details und Hintergründe: `../Docs/migrations/1.21.1-to-1.21.2.md`, Abschnitt 4c.
 
 ## Abhängigkeiten
 
@@ -22,29 +32,30 @@ src/main/java/de/geheimagentnr1/bridge_maker/
 ├── elements/
 │   ├── blocks/
 │   │   ├── BlockItemInterface.java                            # Interface für Block-Items
-│   │   ├── ModBlocksRegisterFactory.java                      # Block-Registry
+│   │   ├── ModBlocksRegisterFactory.java                      # Block/Item/BlockEntity/Menu/DataComponent-Registrierung
 │   │   └── bridge_maker/
-│   │       ├── BridgeMaker.java                               # Block-Klasse
-│   │       ├── BridgeMakerEntity.java                         # Block-Entity
+│   │       ├── BridgeMaker.java                               # Block-Klasse (Setzen/Einsammeln)
+│   │       ├── BridgeMakerEntity.java                         # Block-Entity (27 Slots, BlockStates, setBlocks)
 │   │       ├── BridgeMakerMenu.java                           # Container-Menu
 │   │       ├── BridgeMakerScreen.java                         # Client-Screen
-│   │       └── BridgeMakerSlot.java                           # Inventory-Slot
-│   ├── creative_mod_tabs/
-│   │   ├── BridgeMakerCreativeModeTabFactory.java
-│   │   ├── CreativeModeTabFactory.java
-│   │   └── ModCreativeTabsRegisterFactory.java
-│   └── gametests/
-│       └── BridgeMakerGameTests.java
+│   │       └── BridgeMakerSlot.java                           # Slot (nur BlockItems)
+│   └── creative_mod_tabs/
+│       ├── BridgeMakerCreativeModeTabFactory.java
+│       ├── CreativeModeTabFactory.java
+│       └── ModCreativeTabsRegisterFactory.java
 ├── registry/
 │   ├── RegistryEntry.java                                     # Registry-Utility
 │   └── RegistryHelper.java                                    # Registry-Helper
 └── util/
-    └── CodeNetworkHelper.java                                 # Netzwerk-Utilities
+    ├── BlockStateCodecHelper.java                             # BlockState-Codec mit festem Name/Properties-Format (ab develop_26.1)
+    └── CodeNetworkHelper.java                                 # StreamCodec für die BlockState-Liste
 ```
 
 ## Besonderheiten
 
 - **Block-Entity mit GUI**: `BridgeMakerEntity`, `BridgeMakerMenu`, `BridgeMakerScreen` für Inventar-UI
+- **Gespeicherte Daten**: Items (`Items`), Block-Zustände der eingesammelten Blöcke (`blockStates`, Liste mit `Name`/`Properties`/`Index`) und welche Slots gerade gesetzt sind (`setBlocks`, Byte-Array). Das Format ist in allen Branches gleich, damit Welten beim Versionswechsel ihre Bridge Maker behalten
+- **Item-Komponenten**: `bridge_maker:block_states`, `bridge_maker:set_blocks` (und `minecraft:container` über die Loot-Table), damit ein abgebauter Bridge Maker seinen Inhalt behält
 - **Eigenes Registry-System**: Eigene `RegistryEntry` und `RegistryHelper` Klassen
 
 ## Code-Stil
@@ -70,17 +81,26 @@ src/main/java/de/geheimagentnr1/bridge_maker/
 
 ### Java-Versionen
 
-Verschiedene Java-Versionen sind unter `C:\Program Files\Eclipse Adoptium` installiert. Für einen Gradle-Build muss die passende Java-Version gewählt werden:
-
 ```powershell
-# Java 21 für MC 1.20.5+ (NeoForge)
-$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.9.10-hotspot"
+$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.12.8-hotspot"
 ./gradlew build
 ```
 
-### Unit Tests (JUnit 5)
+Ein grüner Compile gegen jede Zielversion reicht nicht: zusätzlich `../Docs/testing/tools/bincheck.ps1 -PropNeoForge neoforge_version` laufen lassen (Bytecode-Referenzen je Version vergleichen, die Ausgabe muss `<n> references from ...` zeigen).
 
-Für reine Logik-Tests ohne Minecraft-Abhängigkeiten:
+### Ingame-Test (pro Jar niedrigste und höchste Version)
+
+1. Craften (3 Eisengitter, glatter Stein + Redstone + glatter Stein, 3 glatter Stein); Item hat Textur
+2. GUI: Darstellung, Shift-Klick, nur Blöcke einlegbar
+3. Slab + befüllte Shulker-Box + weitere Blöcke einlegen, per Hebel einschalten, Slab nach oben setzen, aus- und wieder einschalten: Slab liegt oben, Shulker-Inhalt erhalten
+4. Befüllten Bridge Maker abbauen (Survival und Creative): kein Inhalt fällt heraus; neu gesetzt ist alles erhalten
+5. Pick-Block (Strg+Mittelklick) auf befüllten Bridge Maker
+6. Server-Neustart im ein- und im ausgeschalteten Zustand
+7. Bei geändertem Speichercode: Welt der Vorversion kopieren und die befüllten Bridge Maker prüfen (verifiziert 1.21.4 → 1.21.5 → 1.21.6)
+
+Hinweis: Ein per `/setblock` gesetzter Redstone-Block schaltet den Bridge Maker nicht ein (auch nicht in 1.21.1), automatisierte Server-Tests decken deshalb nur Laden/Speichern ab.
+
+### Unit Tests (JUnit 5)
 
 ```bash
 ./gradlew test
@@ -90,31 +110,20 @@ Tests liegen unter `src/test/java/`. Ergebnisse: `build/reports/tests/test/index
 
 ### NeoForge GameTest Framework
 
-Für Integration Tests in einer echten Minecraft-Umgebung:
-
-```bash
-./gradlew runGameTestServer
-```
-
-GameTest-Klassen werden mit `@GameTestHolder` annotiert und liegen unter `src/main/java/.../elements/gametests/`.
+Ab `develop_1.21.2` gibt es keine GameTests: Das Annotations-Framework (`@GameTest`, `@GameTestHolder`) existiert ab 1.21.5 nicht mehr, der triviale Smoke-Test wurde samt `gameTestServer`-Run-Config und CI-Job entfernt (siehe `../Docs/migrations/1.21.10-to-1.21.11.md`).
 
 ### CI/CD (GitHub Actions)
 
 Der Workflow `.github/workflows/build-and-test.yml` führt automatisch aus:
 1. **Build**: Kompiliert den Mod
 2. **Unit Tests**: Führt JUnit Tests aus
-3. **GameTests**: Startet GameTestServer (optional)
-
-### Was kann automatisiert getestet werden?
-
-| Aspekt | Automatisiert? | Methode |
-|--------|----------------|---------|
-| Utility-Klassen | ✅ | JUnit |
-| Config-Parsing | ✅ | JUnit |
-| Commands | ✅ | GameTest |
-| Block/Item-Verhalten | ✅ | GameTest |
-| Multi-MC-Version | ⚠️ Pro Branch | CI Matrix |
 
 ## Referenzen
 
 - [NeoForge Migration Primer](https://docs.neoforged.net/primer/docs/) — Dokumentiert API-Aenderungen zwischen Minecraft/NeoForge-Versionen; nuetzlich fuer die Pruefung von Breaking Changes beim Upgrade auf neue Versionen
+
+---
+
+## Wissensdatenbank
+
+Versionsübergreifende Migrations- und Entwicklungs-Erkenntnisse (Breaking Changes, Fixes, Testumgebungs-Patterns) werden zentral in [`../Docs/`](../Docs/) gepflegt. Bei neuen relevanten Erkenntnissen dort ergänzen, nicht nur hier.

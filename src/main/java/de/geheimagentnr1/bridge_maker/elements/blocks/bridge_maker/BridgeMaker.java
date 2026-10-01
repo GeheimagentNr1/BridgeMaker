@@ -1,11 +1,13 @@
 package de.geheimagentnr1.bridge_maker.elements.blocks.bridge_maker;
 
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
 import de.geheimagentnr1.bridge_maker.elements.blocks.BlockItemInterface;
 import lombok.extern.log4j.Log4j2;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -20,8 +22,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -37,17 +42,21 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 	public static final String registry_name = "bridge_maker";
 	
 	@NotNull
-	private static final MapCodec<BridgeMaker> CODEC = simpleCodec( properties -> new BridgeMaker() );
+	private static final Logger LOGGER = LogUtils.getLogger();
 	
-	public BridgeMaker() {
+	public BridgeMaker( @NotNull Properties properties ) {
 		
-		super(
-			Properties.of()
-				.mapColor( MapColor.METAL )
-				.strength( 5.0F, 6.0F )
-				.requiresCorrectToolForDrops()
-				.sound( SoundType.METAL )
-		);
+		super( properties );
+	}
+	
+	@NotNull
+	public static Properties createProperties() {
+		
+		return Properties.of()
+			.mapColor( MapColor.METAL )
+			.strength( 5.0F, 6.0F )
+			.requiresCorrectToolForDrops()
+			.sound( SoundType.METAL );
 	}
 	
 	@Nullable
@@ -57,10 +66,12 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 		return new BridgeMakerEntity( blockPos, blockState );
 	}
 	
-	@Override
+	//Block.codec() and simpleCodec(..) were removed in 26.3, so no @Override and no simpleCodec.
+	//In 26.1/26.2 the codec is only used by the data generator block report (BlockTypes).
+	@NotNull
 	protected MapCodec<? extends BaseEntityBlock> codec() {
 		
-		return CODEC;
+		return MapCodec.unit( this );
 	}
 	
 	@NotNull
@@ -106,7 +117,7 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 		@NotNull Level level,
 		@NotNull BlockPos pos,
 		@NotNull Block neighbarBlock,
-		@NotNull BlockPos neighborPos,
+		@Nullable Orientation orientation,
 		boolean isMoving ) {
 		
 		if( !level.isClientSide() ) {
@@ -172,6 +183,22 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 		}
 	}
 	
+	//BlockEntity.saveToItem was removed in 1.21.4, this is its 1.21.2 implementation
+	@NotNull
+	private static ItemStack saveToItem( @NotNull BlockEntity blockEntity, @NotNull ItemStack stack, @NotNull Level level ) {
+		
+		ItemStack result = new ItemStack( stack.getItem(), stack.getCount() );
+		try( ProblemReporter.ScopedCollector problemReporter =
+			new ProblemReporter.ScopedCollector( blockEntity.problemPath(), LOGGER ) ) {
+			TagValueOutput output = TagValueOutput.createWithContext( problemReporter, level.registryAccess() );
+			blockEntity.saveCustomOnly( output );
+			blockEntity.removeComponentsFromTag( output );
+			BlockItem.setBlockEntityData( result, blockEntity.getType(), output );
+		}
+		result.applyComponents( blockEntity.collectComponents() );
+		return result;
+	}
+	
 	private List<Boolean> unpower(
 		@NotNull BridgeMakerEntity bridgeMakerEntity,
 		List<Boolean> setBlocks,
@@ -216,7 +243,7 @@ public class BridgeMaker extends BaseEntityBlock implements BlockItemInterface {
 					}
 					BlockEntity blockEntity = level.getBlockEntity( collectPos );
 					if( blockEntity != null ) {
-						blockEntity.saveToItem( blockItemStack, level.registryAccess() );
+						blockItemStack = saveToItem( blockEntity, blockItemStack, level );
 					}
 					if( blockItemStack.getItem() instanceof BlockItem ) {
 						bridgeMakerEntity.setItem( i, blockItemStack, blockStates[i] );

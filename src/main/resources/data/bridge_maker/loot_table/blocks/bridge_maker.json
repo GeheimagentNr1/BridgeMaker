@@ -16,6 +16,10 @@
 							"source": "block_entity"
 						}
 					],
+					"modifier":  {
+						"type":   "minecraft:copy_components",
+						"source": "block_entity"
+					},
 					"name":      "bridge_maker:bridge_maker"
 				}
 			],
@@ -23,7 +27,10 @@
 				{
 					"condition": "minecraft:survives_explosion"
 				}
-			]
+			],
+			"condition":  {
+				"type": "minecraft:survives_explosion"
+			}
 		}
 	]
 }

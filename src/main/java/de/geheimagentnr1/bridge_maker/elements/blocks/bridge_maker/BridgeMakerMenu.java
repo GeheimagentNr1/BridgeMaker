@@ -28,7 +28,8 @@ public class BridgeMakerMenu extends AbstractContainerMenu {
 		super( ModBlocksRegisterFactory.BRIDGE_MAKER_CONTAINER, _windowId );
 		checkContainerSize( _container, 27 );
 		container = _container;
-		_container.startOpen( inventory.player );
+		//No Container.startOpen/stopOpen: they are empty defaults for this container and their parameter
+		//changed from Player to ContainerUser in 1.21.9 (NoSuchMethodError in a jar built against 1.21.6)
 		initContainer( inventory );
 	}
 	
@@ -83,12 +84,5 @@ public class BridgeMakerMenu extends AbstractContainerMenu {
 		}
 		
 		return stack;
-	}
-	
-	@Override
-	public void removed( @NotNull Player player ) {
-		
-		super.removed( player );
-		container.stopOpen( player );
 	}
 }
