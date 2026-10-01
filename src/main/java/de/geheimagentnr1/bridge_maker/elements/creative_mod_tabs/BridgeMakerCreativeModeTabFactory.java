@@ -4,7 +4,7 @@ import de.geheimagentnr1.bridge_maker.BridgeMakerMod;
 import de.geheimagentnr1.bridge_maker.elements.blocks.ModBlocksRegisterFactory;
 import de.geheimagentnr1.bridge_maker.registry.RegistryEntry;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
@@ -21,9 +21,9 @@ class BridgeMakerCreativeModeTabFactory implements CreativeModeTabFactory {
 	
 	@NotNull
 	@Override
-	public ResourceLocation getRegistryName() {
+	public Identifier getRegistryName() {
 		
-		return ResourceLocation.fromNamespaceAndPath( BridgeMakerMod.MODID, BridgeMakerMod.MODID );
+		return Identifier.fromNamespaceAndPath( BridgeMakerMod.MODID, BridgeMakerMod.MODID );
 	}
 	
 	@NotNull
