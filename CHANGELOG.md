@@ -1,1 +1,1 @@
-- #2: Fix that after reloading a world, items in an inactive bridge maker were gone
+- Fix dedicated servers not starting with Forge 47.4.16 and newer ("Attempted to load class net/minecraft/client/multiplayer/MultiPlayerGameMode for invalid dist DEDICATED_SERVER")
